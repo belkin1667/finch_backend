@@ -1,0 +1,46 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.3'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.belkin'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+
+    //for support of the configuration in application.properties
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    //Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //Spring Security
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    //Google Guava
+    implementation 'com.google.guava:guava:28.1-jre'
+
+    //JWT Support
+    compile 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtime 'io.jsonwebtoken:jjwt-impl:0.11.2', 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    //Swagger
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
+    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.7.0'
+    compile('org.springframework.boot:spring-boot-starter-web')
+
+    //Lombok
+    compileOnly "org.projectlombok:lombok:1.16.16"
+}
+
+test {
+	useJUnitPlatform()
+}
