@@ -31,7 +31,7 @@ jobs:
 
       - name: Build
         run: |
-          docker build --build-arg JAR_FILE=build/libs/\*.jar -t gcr.io/$GCP_PROJECT_ID/$GCP_SERVICE_NAME:latest .
+          docker build -t gcr.io/$GCP_PROJECT_ID/$GCP_SERVICE_NAME:latest .
 
       - name: Push
         run: |
