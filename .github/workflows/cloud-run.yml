@@ -7,8 +7,6 @@ on:
 
 env:
     GCP_PROJECT_ID: ${{ secrets.PROJECT_ID }}
-    GCP_SA_EMAIL: ${{ secrets.SA_EMAIL }}
-    GCP_SA_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
     GCP_RUN_REGION: europe-north1
     GCP_SERVICE_NAME: finch_backend
 
@@ -19,15 +17,13 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
 
       - name: Setup GCP Service Account
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        uses: google-github-actions/setup-gcloud@master
         with:
           version: 'latest'
-          service_account_email: $GCP_SA_EMAIL
-          service_account_key: $GCP_SA_KEY
-          export_default_credentials: true
+          service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS}}
 
       - name: Configure Docker
         run: |
