@@ -1,7 +1,7 @@
 package com.belkin.finch_backend.security.api;
 
 import com.belkin.finch_backend.model.User;
-import com.belkin.finch_backend.security.api.dto.RegistrationRequest;
+import com.belkin.finch_backend.security.dto.RegistrationRequest;
 import com.belkin.finch_backend.security.exception.UserAlreadyRegisteredException;
 import com.belkin.finch_backend.security.jwt.dto.AuthenticationRequest;
 import com.belkin.finch_backend.security.model.ApplicationUser;

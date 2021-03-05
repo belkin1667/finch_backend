@@ -3,6 +3,9 @@ package com.belkin.finch_backend.model;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter @Setter
 @AllArgsConstructor @RequiredArgsConstructor
@@ -18,8 +21,8 @@ public class User {
     private String description;
     @NonNull private String profilePhotoUrl = DEFAULT_PROFILE_PHOTO_URL;
     @NonNull private ProfileAccess profileAccess = DEFAULT_PROFILE_ACCESS;
-
-    @NonNull private ArrayList<Guide> guides = new ArrayList<>();
+    @NonNull private Set<String> subscriptions = new HashSet<>();
+    @NonNull private Set<String> subscribers = new HashSet<>();
 
     public User(String username) {
         this.username = username;
