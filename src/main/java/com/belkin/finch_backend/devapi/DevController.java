@@ -108,6 +108,13 @@ public class DevController {
             user.setPhone(generate.randomNumbersString(10));
             user.setDescription("description_" + generate.randomLatinString(15));
             user.setTitle("title_" + generate.randomLatinString(5));
+            if (i % 3 == 0)
+                user.setProfileAccess(User.ProfileAccess.ALL);
+            else if (i % 3 == 1)
+                user.setProfileAccess(User.ProfileAccess.NONE);
+            else if (i % 3 == 2)
+                user.setProfileAccess(User.ProfileAccess.MUTUAL_FOLLOWERS);
+
             try {
                 createNewUser(Optional.empty(), user);
             } catch (Exception ignored) { i--; }

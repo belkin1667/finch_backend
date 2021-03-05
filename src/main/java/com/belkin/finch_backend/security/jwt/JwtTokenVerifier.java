@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,11 +41,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
         String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
         try {
-            Jws<Claims> claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-            Claims body = claimsJws.getBody();
+            JwsDecoder decoder = new JwsDecoder(token, secretKey);
+            Claims body = decoder.getBody();
             String username = body.getSubject();
             var authorities = (List<Map<String, String>>) body.get("authorities");
             Set<SimpleGrantedAuthority> simpleGrantedAuthoritySet = authorities.stream()
