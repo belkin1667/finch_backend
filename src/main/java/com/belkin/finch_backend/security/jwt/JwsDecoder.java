@@ -1,13 +1,9 @@
 package com.belkin.finch_backend.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwsHeader;
-import io.jsonwebtoken.Jwts;
+import com.belkin.finch_backend.exception.BadJwtTokenException;
+import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 
 import javax.crypto.SecretKey;
 
@@ -16,12 +12,22 @@ public class JwsDecoder {
 
     @Getter @Setter private String token;
     @Getter private Jws<Claims> jwsClaims;
+    private SecretKey secretKey;
 
     public JwsDecoder(String token, SecretKey secretKey) {
         this.token = token;
-        this.jwsClaims = Jwts.parserBuilder()
-                .setSigningKey(secretKey).build()
-                .parseClaimsJws(token);
+        this.secretKey = secretKey;
+    }
+
+    public JwsDecoder decode() {
+        try {
+            this.jwsClaims = Jwts.parserBuilder()
+                    .setSigningKey(secretKey).build()
+                    .parseClaimsJws(token);
+        } catch (IllegalArgumentException | JwtException e) {
+            throw new BadJwtTokenException(token);
+        }
+        return this;
     }
 
     public Claims getBody() {

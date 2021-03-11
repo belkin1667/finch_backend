@@ -1,4 +1,4 @@
-package com.belkin.finch_backend.devapi;
+package com.belkin.finch_backend.api.devapi;
 
 import com.belkin.finch_backend.model.User;
 import com.belkin.finch_backend.security.exception.UserAlreadyRegisteredException;
@@ -54,7 +54,7 @@ public class DevController {
         String actualPassword = password.orElse("password");
 
         if (applicationUserService.isUserPresent(user.getUsername())) {
-            throw new UserAlreadyRegisteredException(user.getUsername() + " is already registered username");
+            throw new UserAlreadyRegisteredException(user.getUsername());
         }
         userService.addUser(user);
 
@@ -79,7 +79,7 @@ public class DevController {
         if (user.getUsername().equals(username) || !applicationUserService.isUserPresent(user.getUsername()))
             userService.updateUser(username, user);
         else
-            throw new UserAlreadyRegisteredException(user.getUsername() + " is already registered username");
+            throw new UserAlreadyRegisteredException(user.getUsername());
     }
 
     @ApiOperation(value = "Clears the users database")

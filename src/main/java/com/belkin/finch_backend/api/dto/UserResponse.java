@@ -1,4 +1,4 @@
-package com.belkin.finch_backend.dto;
+package com.belkin.finch_backend.api.dto;
 
 import com.belkin.finch_backend.model.User;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.util.Set;
 
 @Getter @Setter
-public class UserProfileDTO {
+public class UserResponse {
 
     private String username;
     private String email;
@@ -20,41 +20,21 @@ public class UserProfileDTO {
     private Set<String> subscribers;
     private Integer subscriptionsCount;
     private Integer subscribersCount;
-    private boolean isMe;
+    private AccessType type;
 
-    public enum UserType {
-        ME,
-        PARTIAL_ACCESS,
-        FULL_ACCESS
-    }
 
-    public static UserProfileDTO getUserProfileDTO(User user, UserType type) {
-        UserProfileDTO userProfileDTO = null;
-        switch (type) {
-            case ME:
-                userProfileDTO = new UserProfileDTO(user, true, true);
-                break;
-            case PARTIAL_ACCESS:
-                userProfileDTO = new UserProfileDTO(user, false, false);
-                break;
-            case FULL_ACCESS:
-                userProfileDTO = new UserProfileDTO(user, false, true);
-                break;
-        }
-        return userProfileDTO;
-    }
 
-    private UserProfileDTO(User user, boolean isMe, boolean fullAccess) {
+    public UserResponse(User user, AccessType type) {
         this.username = user.getUsername();
         this.title = user.getTitle();
         this.description = user.getDescription();
         this.profilePhotoUrl = user.getProfilePhotoUrl();
         this.profileAccess = user.getProfileAccess();
-        this.isMe = isMe;
+        this.type = type;
         this.subscribersCount = user.getSubscribers().size();
         this.subscriptionsCount = user.getSubscriptions().size();
 
-        if (isMe || fullAccess) {
+        if (type.equals(AccessType.ME_FULL_ACCESS) || type.equals(AccessType.NOT_ME_FULL_ACCESS)) {
             this.email = user.getEmail();
             this.phone = user.getPhone();
             this.subscribers = user.getSubscribers();

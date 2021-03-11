@@ -1,5 +1,6 @@
 package com.belkin.finch_backend.security;
 
+import com.belkin.finch_backend.api.ExceptionHandlerFilter;
 import com.belkin.finch_backend.security.jwt.JwtAuthenticationFilter;
 import com.belkin.finch_backend.security.jwt.JwtConfig;
 import com.belkin.finch_backend.security.jwt.JwtTokenVerifier;
@@ -44,6 +45,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                    .addFilterBefore(new ExceptionHandlerFilter(), JwtAuthenticationFilter.class)
                     .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
                     .addFilterAfter(new JwtTokenVerifier(jwtConfig, secretKey), JwtAuthenticationFilter.class)
                 .authorizeRequests()

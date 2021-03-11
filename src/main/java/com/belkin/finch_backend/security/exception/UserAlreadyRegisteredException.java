@@ -1,15 +1,11 @@
 package com.belkin.finch_backend.security.exception;
 
+import com.belkin.finch_backend.exception.MyRestException;
+import org.springframework.http.HttpStatus;
 
-import org.springframework.security.core.AuthenticationException;
-
-public class UserAlreadyRegisteredException extends AuthenticationException {
-
-    public UserAlreadyRegisteredException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+public class UserAlreadyRegisteredException extends MyRestException {
 
     public UserAlreadyRegisteredException(String msg) {
-        super(msg);
+        super(HttpStatus.CONFLICT, "'" + msg + "' is already registered username");
     }
 }
