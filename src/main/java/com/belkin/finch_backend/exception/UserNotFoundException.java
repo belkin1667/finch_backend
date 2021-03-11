@@ -1,8 +1,12 @@
 package com.belkin.finch_backend.exception;
 
-public class UserNotFoundException extends RuntimeException {
+public class UserNotFoundException extends ResourceNotFoundException {
+
+    public UserNotFoundException() {
+        super("User");
+    }
 
     public UserNotFoundException(String missingUsername) {
-        super("Username " + missingUsername + " not found");
+        super("User", "username", missingUsername);
     }
 }

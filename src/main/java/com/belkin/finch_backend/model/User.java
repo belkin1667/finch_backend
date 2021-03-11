@@ -31,7 +31,7 @@ public class User {
     public enum ProfileAccess {
         ALL,
         NONE,
-        MUTUAL_FOLLOWERS;
+        MUTUAL_FOLLOWERS
     }
 }
 

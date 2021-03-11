@@ -38,11 +38,11 @@ public class ApplicationUserDataAccessService implements ApplicationUserDAO {
     }
 
     @Override
-    public boolean updateUserByUsername(String username, ApplicationUser user) {
-        return selectUserByUsername(username).map( u -> {
-            int index = database.indexOf(u);
+    public boolean updateUserByUsername(String username, ApplicationUser updatedUser) {
+        return selectUserByUsername(username).map( oldUser -> {
+            int index = database.indexOf(oldUser);
             if (index >= 0) {
-                database.set(index, user);
+                database.set(index, updatedUser);
                 return true;
             }
             return false;

@@ -44,7 +44,15 @@ public class ApplicationUserService implements UserDetailsService {
         userDetailsDataAccessService.insertUser(user);
     }
 
-    public void deleteUser(String username) {
-        userDetailsDataAccessService.deleteUserByUsername(username);
+    public boolean deleteUser(String username) {
+        return userDetailsDataAccessService.deleteUserByUsername(username);
+    }
+
+    public boolean updateUser(String myUsername, ApplicationUser updatedApplicationUser) {
+        return userDetailsDataAccessService.updateUserByUsername(myUsername, updatedApplicationUser);
+    }
+
+    public ApplicationUser getUserByUsername(String myUsername) {
+        return userDetailsDataAccessService.selectUserByUsername(myUsername).orElse(null);
     }
 }

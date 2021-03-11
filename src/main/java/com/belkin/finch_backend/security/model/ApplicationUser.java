@@ -2,6 +2,7 @@ package com.belkin.finch_backend.security.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,14 +12,14 @@ import java.util.Set;
 @AllArgsConstructor
 public class ApplicationUser implements UserDetails {
 
-    private final String username;
-    @Getter private final String email;
-    private final String password;
-    private final Set<? extends GrantedAuthority> grantedAuthorities;
-    private final boolean isAccountNonExpired;
-    private final boolean isAccountNonLocked;
-    private final boolean isCredentialsNonExpired;
-    private final boolean isEnabled;
+    @Setter private String username;
+    @Getter @Setter private String email;
+    private String password;
+    private Set<? extends GrantedAuthority> grantedAuthorities;
+    private boolean isAccountNonExpired;
+    private boolean isAccountNonLocked;
+    private boolean isCredentialsNonExpired;
+    private boolean isEnabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

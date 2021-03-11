@@ -38,11 +38,11 @@ public class AuthController {
     @ApiOperation(value="Register new user", notes = "If registration is successful returns 200 OK, else returns 403 Forbidden. " +
                                                      "Does not return JWT token. To get JWT token you shall do 'POST /login' right after you registered")
     @PostMapping("/register")
-    public HttpStatus register(@ApiParam(value = "User credentials. Username will be checked for uniqueness. If it is not unique 403 Forbidden will be returned")
+    public String register(@ApiParam(value = "User credentials. Username will be checked for uniqueness. If it is not unique 403 Forbidden will be returned")
                                    @RequestBody RegistrationRequest registrationRequest) {
 
         if (applicationUserService.isUserPresent(registrationRequest.getUsername())) {
-            throw new UserAlreadyRegisteredException(registrationRequest.getUsername() + " is already registered username");
+            throw new UserAlreadyRegisteredException(registrationRequest.getUsername());
         }
 
         User user = new User(registrationRequest.getUsername());
@@ -54,7 +54,7 @@ public class AuthController {
                                                        USER.getGrantedAuthorities(),
                                                      true, true, true, true);
         applicationUserService.addUser(applicationUser);
-        return HttpStatus.OK;
+        return "Success";
     }
 
     // Endpoint /auth/login is managed by JwtAuthenticationFilter,

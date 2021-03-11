@@ -1,4 +1,4 @@
-package com.belkin.finch_backend.devapi;
+package com.belkin.finch_backend.api.devapi;
 
 import java.util.Random;
 

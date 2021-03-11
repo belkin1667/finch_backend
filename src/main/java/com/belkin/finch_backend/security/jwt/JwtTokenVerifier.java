@@ -2,9 +2,7 @@ package com.belkin.finch_backend.security.jwt;
 
 import com.google.common.base.Strings;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,6 +40,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
         try {
             JwsDecoder decoder = new JwsDecoder(token, secretKey);
+            decoder.decode();
             Claims body = decoder.getBody();
             String username = body.getSubject();
             var authorities = (List<Map<String, String>>) body.get("authorities");
@@ -55,5 +54,12 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    public String getRequesterUsername(String authorizationHeader) {
+        String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
+        JwsDecoder decoder = new JwsDecoder(token, secretKey);
+        decoder.decode();
+        return decoder.getBody().getSubject();
     }
 }
