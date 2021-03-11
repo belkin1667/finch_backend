@@ -1,20 +1,16 @@
 package com.belkin.finch_backend.service;
 
 import com.belkin.finch_backend.dao.interfaces.GuideDAO;
-import com.belkin.finch_backend.dao.interfaces.UserDAO;
 import com.belkin.finch_backend.api.dto.AccessType;
-import com.belkin.finch_backend.api.dto.GuideRequest;
 import com.belkin.finch_backend.api.dto.GuideResponse;
-import com.belkin.finch_backend.exception.GuideNotFoundException;
+import com.belkin.finch_backend.exception.notfound.GuideNotFoundException;
 import com.belkin.finch_backend.model.Guide;
 import com.belkin.finch_backend.util.Base62;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.lang.annotation.Retention;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

@@ -1,5 +1,6 @@
-package com.belkin.finch_backend.exception;
+package com.belkin.finch_backend.exception.notfound;
 
+import com.belkin.finch_backend.exception.MyRestException;
 import org.springframework.http.HttpStatus;
 
 public class ResourceNotFoundException extends MyRestException {

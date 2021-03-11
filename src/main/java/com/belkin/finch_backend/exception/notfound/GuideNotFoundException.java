@@ -1,4 +1,4 @@
-package com.belkin.finch_backend.exception;
+package com.belkin.finch_backend.exception.notfound;
 
 import com.belkin.finch_backend.util.Base62;
 

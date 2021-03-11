@@ -5,9 +5,10 @@ import com.belkin.finch_backend.exception.MyRestException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.security.sasl.AuthenticationException;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

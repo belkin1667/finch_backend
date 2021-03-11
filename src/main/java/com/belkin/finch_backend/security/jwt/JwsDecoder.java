@@ -1,6 +1,6 @@
 package com.belkin.finch_backend.security.jwt;
 
-import com.belkin.finch_backend.exception.BadJwtTokenException;
+import com.belkin.finch_backend.exception.invalid.InvalidJwtTokenException;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ public class JwsDecoder {
                     .setSigningKey(secretKey).build()
                     .parseClaimsJws(token);
         } catch (IllegalArgumentException | JwtException e) {
-            throw new BadJwtTokenException(token);
+            throw new InvalidJwtTokenException(token);
         }
         return this;
     }

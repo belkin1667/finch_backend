@@ -1,4 +1,4 @@
-package com.belkin.finch_backend.exception;
+package com.belkin.finch_backend.exception.notfound;
 
 public class UserNotFoundException extends ResourceNotFoundException {
 
