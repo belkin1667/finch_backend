@@ -3,13 +3,10 @@ package com.belkin.finch_backend.service;
 import com.belkin.finch_backend.dao.interfaces.UserDAO;
 import com.belkin.finch_backend.api.dto.AccessType;
 import com.belkin.finch_backend.api.dto.UserResponse;
-import com.belkin.finch_backend.exception.UserNotFoundException;
+import com.belkin.finch_backend.exception.notfound.UserNotFoundException;
 import com.belkin.finch_backend.model.User;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Set;

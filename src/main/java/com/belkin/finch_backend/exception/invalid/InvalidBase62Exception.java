@@ -1,5 +1,6 @@
-package com.belkin.finch_backend.exception;
+package com.belkin.finch_backend.exception.invalid;
 
+import com.belkin.finch_backend.exception.MyRestException;
 import com.belkin.finch_backend.util.Base62;
 import org.springframework.http.HttpStatus;
 

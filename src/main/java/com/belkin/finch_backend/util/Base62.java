@@ -1,6 +1,6 @@
 package com.belkin.finch_backend.util;
 
-import com.belkin.finch_backend.exception.InvalidBase62Exception;
+import com.belkin.finch_backend.exception.invalid.InvalidBase62Exception;
 import lombok.Getter;
 
 import java.util.Random;
@@ -58,7 +58,7 @@ public class Base62 {
     }
 
     private static boolean isValidBase62(String str) {
-        if (str == null || str.length() == 0 || str.length() > 11)
+        if (str == null || str.length() == 0)
             return false;
 
         char[] chars = str.toCharArray();

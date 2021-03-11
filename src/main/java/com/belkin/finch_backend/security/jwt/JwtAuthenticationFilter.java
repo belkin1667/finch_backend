@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         String token = Jwts.builder()
                 .setSubject(authResult.getName())
                 .claim("authorities", authResult.getAuthorities())
@@ -58,12 +58,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .signWith(secretKey)
                 .compact();
 
+        response.getWriter().write("Success");
         response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
         response.setStatus(HttpStatus.OK.value());
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.TEXT_PLAIN_VALUE);
         response.getWriter().print(failed.getLocalizedMessage());
