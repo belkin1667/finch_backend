@@ -1,7 +1,7 @@
 package com.belkin.finch_backend.dao.fake;
 
 import com.belkin.finch_backend.dao.interfaces.ImageMetadataDAO;
-import com.belkin.finch_backend.exception.notexist.ImageMetadataAlreadyExistsException;
+import com.belkin.finch_backend.exception.alreadyexist.ImageMetadataAlreadyExistsException;
 import com.belkin.finch_backend.exception.notfound.ImageMetadataNotFoundException;
 import com.belkin.finch_backend.model.ImageMetadata;
 import com.belkin.finch_backend.util.Base62;

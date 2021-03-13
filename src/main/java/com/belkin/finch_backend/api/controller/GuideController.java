@@ -9,10 +9,11 @@ import com.belkin.finch_backend.service.GuideService;
 import com.belkin.finch_backend.util.Base62;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,25 +34,35 @@ public class GuideController {
     @GetMapping(path = "/{id}")
     public GuideResponse getGuideById(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        return guideService.getUserGuide(myUsername, id);
+        return guideService.getGuideById(myUsername, id);
     }
 
     @ApiOperation(value = "Return user's guides by username", notes = "If {username} == 'me', current authenticated user's guide is returned")
     @GetMapping(path="/u/{username}")
     public List<GuideResponse> getUserGuides(@PathVariable("username") String requestedUsername, @RequestHeader("Authorization") String authorizationHeader) {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
+
         if (requestedUsername.equals("me"))
             requestedUsername = myUsername;
 
-        return guideService.getUserGuides(myUsername, requestedUsername);
+        return guideService.getGuidesByUsername(myUsername, requestedUsername);
+    }
+
+
+    @ApiOperation(value = "Get guide by its child card id")
+    @GetMapping(path = "/c/{card_id}")
+    public GuideResponse getGuideByCardId(@PathVariable("card_id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return guideService.getGuideByCardId(id, myUsername);
     }
 
     @ApiOperation(value = "Create guide written by authorized user", notes = "Id of the guide returned. Note: if id is provided, it is ignored!")
     @PostMapping
     public Base62 addGuide(@RequestBody GuideRequest guideRequest, @RequestHeader("Authorization") String authorizationHeader) {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        OffsetDateTime dateNow = OffsetDateTime.now(ZoneOffset.UTC);
         Guide guide = new Guide(myUsername, guideRequest.getId(),guideRequest.getTitle(),
-                guideRequest.getDescription(), guideRequest.getCreated(),
+                guideRequest.getDescription(), guideRequest.getLocation(), dateNow, guideRequest.getTravelDate(),
                 guideRequest.getThumbnailUrl());
         return guideService.addGuide(myUsername, guide);
     }
@@ -63,8 +74,9 @@ public class GuideController {
     @PutMapping
     public String editGuide(@RequestBody GuideRequest guideRequest, @RequestHeader("Authorization") String authorizationHeader) {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        Guide guide = new Guide(myUsername,guideRequest.getId(),guideRequest.getTitle(),
-                guideRequest.getDescription(), guideRequest.getCreated(),
+        OffsetDateTime dateNow = OffsetDateTime.now(ZoneOffset.UTC);
+        Guide guide = new Guide(myUsername, guideRequest.getId(),guideRequest.getTitle(),
+                guideRequest.getDescription(), guideRequest.getLocation(), dateNow, guideRequest.getTravelDate(),
                 guideRequest.getThumbnailUrl());
         boolean result = guideService.editGuide(myUsername, guide);
 
@@ -81,4 +93,6 @@ public class GuideController {
         Optional<String> res = Optional.ofNullable(result ? "Success" : null);
         return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
     }
+
+
 }
