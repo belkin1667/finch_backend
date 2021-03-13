@@ -1,6 +1,7 @@
 package com.belkin.finch_backend.dao.interfaces;
 
 import com.belkin.finch_backend.model.Card;
+import com.belkin.finch_backend.util.Base62;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,13 +11,15 @@ public interface CardDAO {
 
     List<Card> readAllCards();
 
-    List<Card> readCardsByGuideId(UUID guideId);
+    List<Card> readCardsByGuideId(Base62 guideId);
 
-    Optional<Card> readCardById(UUID guideId, UUID id);
+    Optional<Card> readCardById(Base62 id);
 
-    boolean createCard(Card card);
+    Base62 createCard(Card card);
 
-    boolean updateCardById(UUID guideId, UUID id, Card card);
+    boolean updateCardById(Base62 id, Card card);
 
-    boolean deleteCardById(UUID guideId, UUID id);
+    boolean deleteCardById(Base62 id);
+
+    List<Base62> readCardsIdsByGuideId(Base62 guideId);
 }

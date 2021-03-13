@@ -1,4 +1,4 @@
-package com.belkin.finch_backend.exception.notexist;
+package com.belkin.finch_backend.exception.alreadyexist;
 
 import com.belkin.finch_backend.exception.MyRestException;
 import com.belkin.finch_backend.util.Base62;

@@ -5,15 +5,17 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Getter @Setter
 public class GuideRequest {
 
     private Base62 id;
-    @NonNull private String title;
-    @NonNull private String description;
-    @NonNull private Date created;
+    private String title;
+    private String description;
+    private String location;
+    private OffsetDateTime travelDate;
     private String thumbnailUrl;
 
 }
