@@ -16,15 +16,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class GuideService {
 
-    private GuideDAO guideDAO;
-    private CardDAO cardDAO;
-    private UserService userService;
+    private final GuideDAO guideDAO;
+    private final CardDAO cardDAO;
+    private final UserService userService;
 
     @Autowired
     public GuideService(@Qualifier("guide_fake") GuideDAO guideDAO,
@@ -38,7 +41,7 @@ public class GuideService {
 
     public GuideResponse getGuideById(String myUsername, Base62 guideId) {
         Guide guide = guideDAO.readGuideById(guideId).orElseThrow(() -> new GuideNotFoundException(guideId));
-        return new GuideResponse( guide, guide.getAuthorUsername().equals(myUsername) ? AccessType.ME_FULL_ACCESS : AccessType.NOT_ME_FULL_ACCESS);
+        return new GuideResponse(guide, guide.getAuthorUsername().equals(myUsername) ? AccessType.ME_FULL_ACCESS : AccessType.NOT_ME_FULL_ACCESS);
     }
 
     public List<GuideResponse> getGuidesPreviewByUsername(String myUsername, String requestedUsername) {
@@ -71,7 +74,8 @@ public class GuideService {
     }
 
     public GuideResponse getGuideByCardId(Base62 cardId, String myUsername) {
-        Base62 guideId = getGuideIdByCardId(cardId);;
+        Base62 guideId = getGuideIdByCardId(cardId);
+        ;
         return getGuideById(myUsername, guideId);
     }
 
@@ -99,10 +103,6 @@ public class GuideService {
         boolean res = guide.getAuthorUsername().equals(username);
         return res;
     }
-
-
-
-
 
 
     // ========================= Card API ========================= //
@@ -134,7 +134,7 @@ public class GuideService {
     }
 
     public boolean editCard(String myUsername, Card newCard) {
-        if(!isUserCardAuthor(myUsername, newCard.getId()))
+        if (!isUserCardAuthor(myUsername, newCard.getId()))
             throw new AccessDeniedException(myUsername);
         Card oldGuide = cardDAO.readCardById(newCard.getId()).orElseThrow(() -> new CardNotFoundException(newCard.getId()));
         oldGuide.edit(newCard);
@@ -142,7 +142,7 @@ public class GuideService {
     }
 
     public boolean deleteCardById(Base62 id, String myUsername) {
-        if(!isUserCardAuthor(myUsername, id))
+        if (!isUserCardAuthor(myUsername, id))
             throw new AccessDeniedException(myUsername);
         return cardDAO.deleteCardById(id);
     }
@@ -161,5 +161,21 @@ public class GuideService {
     public boolean isUserCardAuthor(String username, Base62 cardId) {
         Base62 guideId = getGuideIdByCardId(cardId);
         return isUserGuideAuthor(username, guideId);
+    }
+
+    public List<GuideResponse> getGuidesOfSubscriptionsOfUser(String myUsername) {
+        List<GuideResponse> guides = new ArrayList<>();
+        Set<String> subs = userService.getSubscriptions(myUsername);
+        for (String sub : subs) {
+            guides.addAll(getGuidesByUsername(myUsername, sub));
+        }
+        guides.sort(Comparator.comparing(GuideResponse::getCreated));
+        return guides;
+    }
+
+    public List<String> getGuideIdsOfSubscriptionsOfUser(String myUsername) {
+        return getGuidesOfSubscriptionsOfUser(myUsername).stream()
+                .map(GuideResponse::getId)
+                .collect(Collectors.toList());
     }
 }

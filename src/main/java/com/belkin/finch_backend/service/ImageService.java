@@ -25,7 +25,7 @@ import java.util.Optional;
 @Service
 public class ImageService {
 
-    private ImageMetadataDAO imageMetadataDAO;
+    private final ImageMetadataDAO imageMetadataDAO;
 
     @Autowired
     public ImageService(@Qualifier("image_fake") ImageMetadataDAO imageMetadataDAO) {

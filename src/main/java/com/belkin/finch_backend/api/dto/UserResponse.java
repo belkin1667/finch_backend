@@ -16,12 +16,17 @@ public class UserResponse {
     private String description;
     private String profilePhotoUrl;
     private User.ProfileAccess profileAccess;
-    private Set<String> subscriptions;
-    private Set<String> subscribers;
     private Integer subscriptionsCount;
     private Integer subscribersCount;
     private AccessType type;
 
+
+
+    public UserResponse(User user, Integer subscriptionsCount, Integer subscribersCount, AccessType type) {
+        this(user, type);
+        this.subscribersCount = subscribersCount;
+        this.subscriptionsCount = subscriptionsCount;
+    }
 
 
     public UserResponse(User user, AccessType type) {
@@ -31,14 +36,10 @@ public class UserResponse {
         this.profilePhotoUrl = user.getProfilePhotoUrl();
         this.profileAccess = user.getProfileAccess();
         this.type = type;
-        this.subscribersCount = user.getSubscribers().size();
-        this.subscriptionsCount = user.getSubscriptions().size();
 
         if (type.equals(AccessType.ME_FULL_ACCESS) || type.equals(AccessType.NOT_ME_FULL_ACCESS)) {
             this.email = user.getEmail();
             this.phone = user.getPhone();
-            this.subscribers = user.getSubscribers();
-            this.subscriptions = user.getSubscriptions();
         }
     }
 }

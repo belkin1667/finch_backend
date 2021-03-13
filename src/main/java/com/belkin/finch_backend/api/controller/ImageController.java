@@ -19,8 +19,8 @@ import java.util.Optional;
 @RequestMapping("/i")
 public class ImageController {
 
-    private ImageService imageService;
-    private JwtTokenVerifier jwt;
+    private final ImageService imageService;
+    private final JwtTokenVerifier jwt;
 
     @Autowired
     public ImageController(ImageService imageService, JwtConfig jwtConfig, SecretKey secretKey) {
