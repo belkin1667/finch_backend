@@ -21,8 +21,6 @@ public class User {
     private String description;
     @NonNull private String profilePhotoUrl = DEFAULT_PROFILE_PHOTO_URL;
     @NonNull private ProfileAccess profileAccess = DEFAULT_PROFILE_ACCESS;
-    @NonNull private Set<String> subscriptions = new HashSet<>();
-    @NonNull private Set<String> subscribers = new HashSet<>();
 
     public User(String username) {
         this.username = username;

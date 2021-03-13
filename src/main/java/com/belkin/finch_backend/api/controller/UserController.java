@@ -10,19 +10,19 @@ import com.belkin.finch_backend.security.service.ApplicationUserService;
 import com.belkin.finch_backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
 import java.util.Optional;
+import java.util.Set;
 
 @RequestMapping("users")
 @RestController
 public class UserController {
 
-    private JwtTokenVerifier jwt;
-    private UserService userService;
-    private ApplicationUserService applicationUserService;
+    private final JwtTokenVerifier jwt;
+    private final UserService userService;
+    private final ApplicationUserService applicationUserService;
 
     @Autowired
     public UserController(UserService userService, ApplicationUserService applicationUserService, JwtConfig jwtConfig, SecretKey secretKey) {
@@ -76,5 +76,40 @@ public class UserController {
         Optional<String> res = Optional.ofNullable(result ? "Success" : null);
         return res.orElseThrow(() -> new RuntimeException("User delete failed"));
     }
+
+
+    @GetMapping(path = "/subs/subscribers")
+    public Set<String> getSubscribers(@RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return userService.getSubscribers(myUsername);
+    }
+
+    @GetMapping(path = "/subs/subscriptions")
+    public Set<String> getSubscriptions(@RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return userService.getSubscriptions(myUsername);
+    }
+
+    @PostMapping(path = "/subs/{username}")
+    public String subscribe(@PathVariable("username") String subscription, @RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        boolean result = userService.subscribe(myUsername, subscription);
+        if (result)
+            return "Success";
+        else
+            throw new RuntimeException();
+    }
+
+    @DeleteMapping(path = "/subs/{username}")
+    public String unsubscribe(@PathVariable("username") String subscription, @RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        boolean result = userService.unsubscribe(myUsername, subscription);
+        if (result)
+            return "Success";
+        else
+            throw new RuntimeException();
+    }
+
+
 
 }

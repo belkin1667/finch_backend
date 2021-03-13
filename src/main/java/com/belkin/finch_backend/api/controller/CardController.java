@@ -16,8 +16,8 @@ import java.util.List;
 @RequestMapping("/cards")
 public class CardController {
 
-    private GuideService guideService;
-    private JwtTokenVerifier jwt;
+    private final GuideService guideService;
+    private final JwtTokenVerifier jwt;
 
 
     public CardController(GuideService guideService, JwtConfig jwtConfig, SecretKey secretKey) {

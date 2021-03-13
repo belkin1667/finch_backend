@@ -21,8 +21,8 @@ import java.util.Optional;
 @RequestMapping("/guides")
 public class GuideController {
 
-    private GuideService guideService;
-    private JwtTokenVerifier jwt;
+    private final GuideService guideService;
+    private final JwtTokenVerifier jwt;
 
     @Autowired
     public GuideController(GuideService guideService, JwtConfig jwtConfig, SecretKey secretKey) {
