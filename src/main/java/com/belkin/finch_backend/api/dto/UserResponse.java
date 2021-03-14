@@ -1,11 +1,13 @@
 package com.belkin.finch_backend.api.dto;
 
 import com.belkin.finch_backend.model.User;
+import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
-
+@Slf4j
 @Getter @Setter
 public class UserResponse {
 
@@ -23,13 +25,14 @@ public class UserResponse {
 
 
     public UserResponse(User user, Integer subscriptionsCount, Integer subscribersCount, AccessType type) {
-        this(user, type);
+        this(user, type, false);
         this.subscribersCount = subscribersCount;
         this.subscriptionsCount = subscriptionsCount;
+        log.info("Created UserResponse: " + new Gson().toJson(this));
     }
 
-
-    public UserResponse(User user, AccessType type) {
+    private UserResponse(User user, AccessType type, boolean logResult) {
+        log.info("Creating UserResponse: " + new Gson().toJson(this));
         this.username = user.getUsername();
         this.title = user.getTitle();
         this.description = user.getDescription();
@@ -41,5 +44,11 @@ public class UserResponse {
             this.email = user.getEmail();
             this.phone = user.getPhone();
         }
+        if (logResult)
+            log.info("Created UserResponse: " + new Gson().toJson(this));
+    }
+
+    public UserResponse(User user, AccessType type) {
+        this(user, type, true);
     }
 }

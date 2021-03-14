@@ -1,11 +1,14 @@
 package com.belkin.finch_backend.model;
 
 import com.belkin.finch_backend.util.Base62;
+import com.google.gson.Gson;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
 
+@Slf4j
 @Getter @Setter
 public class Guide {
 
@@ -21,6 +24,8 @@ public class Guide {
     private String thumbnailUrl = DEFAULT_THUMBNAIL_URL;
 
     public Guide(String authorUsername, Base62 id, String title, String description, String location, OffsetDateTime createdDate, OffsetDateTime travelDate, String thumbnailUrl) {
+        log.info("Creating Guide...");
+
         this.authorUsername = authorUsername;
         this.id = id;
         this.title = title;
@@ -32,9 +37,13 @@ public class Guide {
             this.thumbnailUrl = DEFAULT_THUMBNAIL_URL;
         else
             this.thumbnailUrl = thumbnailUrl;
+
+        log.info("Created guide instance: " + new Gson().toJson(this));
     }
 
     public void edit(Guide newGuide) {
+        log.info("Updating guide instance... Old value: " + new Gson().toJson(this) + " Updated fields: " + new Gson().toJson(newGuide));
+
         if (newGuide.getAuthorUsername() != null)
             setAuthorUsername(newGuide.getAuthorUsername());
         if (newGuide.getId() != null)
@@ -51,5 +60,7 @@ public class Guide {
             setTravelDate(newGuide.getTravelDate());
         if (newGuide.getThumbnailUrl() != null)
             setThumbnailUrl(newGuide.getThumbnailUrl());
+
+        log.info("Updated guide: " + new Gson().toJson(this));
     }
 }

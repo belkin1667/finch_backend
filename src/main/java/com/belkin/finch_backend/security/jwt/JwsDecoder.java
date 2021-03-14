@@ -4,10 +4,12 @@ import com.belkin.finch_backend.exception.invalid.InvalidJwtTokenException;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 
 
+@Slf4j
 public class JwsDecoder {
 
     @Getter @Setter private String token;
@@ -20,6 +22,8 @@ public class JwsDecoder {
     }
 
     public JwsDecoder decode() {
+        log.info("Decoding JWS token...");
+
         try {
             this.jwsClaims = Jwts.parserBuilder()
                     .setSigningKey(secretKey).build()

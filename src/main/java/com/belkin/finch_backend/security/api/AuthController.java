@@ -7,9 +7,11 @@ import com.belkin.finch_backend.security.jwt.dto.AuthenticationRequest;
 import com.belkin.finch_backend.security.model.ApplicationUser;
 import com.belkin.finch_backend.security.service.ApplicationUserService;
 import com.belkin.finch_backend.service.UserService;
+import com.google.gson.Gson;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ResponseHeader;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,41 +22,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.belkin.finch_backend.security.ApplicationUserRole.USER;
 
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
+    private final Gson gson = new Gson();
     private UserService userService;
     private ApplicationUserService applicationUserService;
-    private PasswordEncoder passwordEncoder;
 
 
     @Autowired
-    public AuthController(UserService userService, ApplicationUserService applicationUserService, PasswordEncoder passwordEncoder) {
+    public AuthController(UserService userService, ApplicationUserService applicationUserService) {
         this.userService = userService;
         this.applicationUserService = applicationUserService;
-        this.passwordEncoder = passwordEncoder;
     }
     @ApiOperation(value="Register new user", notes = "If registration is successful returns 200 OK, else returns 403 Forbidden. " +
                                                      "Does not return JWT token. To get JWT token you shall do 'POST /login' right after you registered")
     @PostMapping("/register")
     public String register(@ApiParam(value = "User credentials. Username will be checked for uniqueness. If it is not unique 403 Forbidden will be returned")
                                    @RequestBody RegistrationRequest registrationRequest) {
+        log.info("POST /auth/register with Body: " + gson.toJson(registrationRequest));
 
-        if (applicationUserService.isUserPresent(registrationRequest.getUsername())) {
-            throw new UserAlreadyRegisteredException(registrationRequest.getUsername());
-        }
-
-        User user = new User(registrationRequest.getUsername());
-        user.setEmail(registrationRequest.getEmail());
-        userService.addUser(user);
-
-        ApplicationUser applicationUser = new ApplicationUser(registrationRequest.getUsername(), registrationRequest.getEmail(),
-                                                              passwordEncoder.encode(registrationRequest.getPassword()),
-                                                       USER.getGrantedAuthorities(),
-                                                     true, true, true, true);
-        applicationUserService.addUser(applicationUser);
-        return "Success";
+        boolean result = applicationUserService.registerUser(registrationRequest);
+        if (result)
+            return "Success";
+        else
+            throw new RuntimeException();
     }
 
     // Endpoint /auth/login is managed by JwtAuthenticationFilter,

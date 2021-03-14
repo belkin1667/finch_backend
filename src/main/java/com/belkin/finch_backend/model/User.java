@@ -1,12 +1,15 @@
 package com.belkin.finch_backend.model;
 
+import com.google.gson.Gson;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Getter @Setter
 @AllArgsConstructor @RequiredArgsConstructor
 public class User {
@@ -23,7 +26,11 @@ public class User {
     @NonNull private ProfileAccess profileAccess = DEFAULT_PROFILE_ACCESS;
 
     public User(String username) {
+        log.info("Creating user...");
+
         this.username = username;
+
+        log.info("Created User: " + new Gson().toJson(this));
     }
 
     public enum ProfileAccess {
