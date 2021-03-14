@@ -20,4 +20,6 @@ public interface GuideDAO {
 
     boolean deleteGuideById(Base62 id);
 
+    boolean isPresent(Base62 id);
+
 }

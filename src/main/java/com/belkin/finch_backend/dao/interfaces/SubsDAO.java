@@ -19,4 +19,8 @@ public interface SubsDAO {
     boolean removeSubscription(Subscription subscription);
 
     boolean isSubscriptionPresent(Subscription subscription);
+
+    boolean isUserPresentAsSubscription(String username);
+
+    boolean isUserPresentAsSubscriber(String username);
 }

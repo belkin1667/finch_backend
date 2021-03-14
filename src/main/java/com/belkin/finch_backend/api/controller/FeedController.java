@@ -8,6 +8,7 @@ import com.belkin.finch_backend.security.jwt.JwtTokenVerifier;
 import com.belkin.finch_backend.service.GuideService;
 import com.belkin.finch_backend.service.UserService;
 import com.belkin.finch_backend.util.Base62;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("feed")
 public class FeedController {
@@ -38,12 +40,16 @@ public class FeedController {
 
     @GetMapping
     public List<String> getFeed(@RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /feed with header Authorization = " + authorizationHeader);
+
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
         return guideService.getGuideIdsOfSubscriptionsOfUser(myUsername);
     }
 
     @GetMapping("/full")
     public List<GuideResponse> getFeedFull(@RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /feed/full with header Authorization = " + authorizationHeader);
+
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
         return guideService.getGuidesOfSubscriptionsOfUser(myUsername);
     }

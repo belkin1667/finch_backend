@@ -14,6 +14,6 @@ public class CardRequest {
     String thumbnailUrl;
     String title;
     String location;
-    String text;
+    String content;
     List<String> tags;
 }

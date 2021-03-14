@@ -38,6 +38,7 @@ public class ImageService {
         do {
             id = Base62.randomBase62(ImageMetadata.ID_LENGTH);
         } while (imageMetadataDAO.isPresent(id));
+
         String originalFileName = file.getOriginalFilename();
         String ext = originalFileName == null ? "" : originalFileName.substring(originalFileName.lastIndexOf('.'));
         ImageMetadata imageMetadata = new ImageMetadata(uploaderUsername, id, ext);

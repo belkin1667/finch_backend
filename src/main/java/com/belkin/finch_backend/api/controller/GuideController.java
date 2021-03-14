@@ -7,7 +7,9 @@ import com.belkin.finch_backend.security.jwt.JwtConfig;
 import com.belkin.finch_backend.security.jwt.JwtTokenVerifier;
 import com.belkin.finch_backend.service.GuideService;
 import com.belkin.finch_backend.util.Base62;
+import com.google.gson.Gson;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,10 +19,12 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/guides")
 public class GuideController {
 
+    private final Gson gson = new Gson();
     private final GuideService guideService;
     private final JwtTokenVerifier jwt;
 
@@ -33,13 +37,18 @@ public class GuideController {
     @ApiOperation(value = "Get guide by its id")
     @GetMapping(path = "/{id}")
     public GuideResponse getGuideById(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /guides/{id}, where id='" + id.getId() + "' with header Authorization = '" + authorizationHeader + "'");
+
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
+
         return guideService.getGuideById(myUsername, id);
     }
 
     @ApiOperation(value = "Return user's guides by username", notes = "If {username} == 'me', current authenticated user's guide is returned")
-    @GetMapping(path="/u/{username}")
+    @GetMapping(path = "/u/{username}")
     public List<GuideResponse> getUserGuides(@PathVariable("username") String requestedUsername, @RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /guides/u/{username}, where username='" + requestedUsername + "' with header Authorization = '" + authorizationHeader + "'");
+
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
 
         if (requestedUsername.equals("me"))
@@ -52,6 +61,8 @@ public class GuideController {
     @ApiOperation(value = "Get guide by its child card id")
     @GetMapping(path = "/c/{card_id}")
     public GuideResponse getGuideByCardId(@PathVariable("card_id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /guides/c/{card_id}, where card_id='" + id.getId() + "' with header Authorization = '" + authorizationHeader + "'");
+
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
         return guideService.getGuideByCardId(id, myUsername);
     }
@@ -59,9 +70,11 @@ public class GuideController {
     @ApiOperation(value = "Create guide written by authorized user", notes = "Id of the guide returned. Note: if id is provided, it is ignored!")
     @PostMapping
     public Base62 addGuide(@RequestBody GuideRequest guideRequest, @RequestHeader("Authorization") String authorizationHeader) {
+        log.info("POST /guides/ with header Authorization = '" + authorizationHeader + "' and Body: " + gson.toJson(guideRequest));
+
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
         OffsetDateTime dateNow = OffsetDateTime.now(ZoneOffset.UTC);
-        Guide guide = new Guide(myUsername, guideRequest.getId(),guideRequest.getTitle(),
+        Guide guide = new Guide(myUsername, guideRequest.getId(), guideRequest.getTitle(),
                 guideRequest.getDescription(), guideRequest.getLocation(), dateNow, guideRequest.getTravelDate(),
                 guideRequest.getThumbnailUrl());
         return guideService.addGuide(myUsername, guide);
@@ -73,9 +86,11 @@ public class GuideController {
             "2. Provide all fields of the entity: provide old values for non-updated fields and new values for updated fields")
     @PutMapping
     public String editGuide(@RequestBody GuideRequest guideRequest, @RequestHeader("Authorization") String authorizationHeader) {
+        log.info("PUT /guides/ with header Authorization = '" + authorizationHeader + "' and Body: " + gson.toJson(guideRequest));
+
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
         OffsetDateTime dateNow = OffsetDateTime.now(ZoneOffset.UTC);
-        Guide guide = new Guide(myUsername, guideRequest.getId(),guideRequest.getTitle(),
+        Guide guide = new Guide(myUsername, guideRequest.getId(), guideRequest.getTitle(),
                 guideRequest.getDescription(), guideRequest.getLocation(), dateNow, guideRequest.getTravelDate(),
                 guideRequest.getThumbnailUrl());
         boolean result = guideService.editGuide(myUsername, guide);
@@ -87,7 +102,9 @@ public class GuideController {
     @ApiOperation(value = "Edit guide of authorized user", notes = "200 OK if success, 500 Internal Server Error if fail")
     @DeleteMapping(path = "/{id}")
     public String deleteGuide(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
-        String myUsername =jwt.getRequesterUsername(authorizationHeader);
+        log.info("DELETE /guides/{id}, where id='" + id.getId() + "' with header Authorization = '" + authorizationHeader + "'");
+
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
         boolean result = guideService.deleteGuide(myUsername, id);
 
         Optional<String> res = Optional.ofNullable(result ? "Success" : null);

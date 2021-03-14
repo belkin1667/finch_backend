@@ -22,4 +22,6 @@ public interface CardDAO {
     boolean deleteCardById(Base62 id);
 
     List<Base62> readCardsIdsByGuideId(Base62 guideId);
+
+    boolean isPresent(Base62 id);
 }

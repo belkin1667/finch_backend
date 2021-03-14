@@ -12,6 +12,8 @@ import com.belkin.finch_backend.exception.notfound.GuideNotFoundException;
 import com.belkin.finch_backend.model.Card;
 import com.belkin.finch_backend.model.Guide;
 import com.belkin.finch_backend.util.Base62;
+import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class GuideService {
 
@@ -40,7 +43,12 @@ public class GuideService {
     // ========================= Guide API ========================= //
 
     public GuideResponse getGuideById(String myUsername, Base62 guideId) {
+        log.info("Getting guide by id, where id = " + guideId.getId());
+
         Guide guide = guideDAO.readGuideById(guideId).orElseThrow(() -> new GuideNotFoundException(guideId));
+
+        log.info("Guide " + new Gson().toJson(guide));
+
         return new GuideResponse(guide, guide.getAuthorUsername().equals(myUsername) ? AccessType.ME_FULL_ACCESS : AccessType.NOT_ME_FULL_ACCESS);
     }
 
@@ -80,6 +88,16 @@ public class GuideService {
     }
 
     public Base62 addGuide(String myUsername, Guide guide) {
+
+        log.info("Generating unique base62 id for card...");
+        Base62 id;
+        do {
+            id = Base62.randomBase62();
+            log.info("Trying identifier " + id.getId());
+        } while (guideDAO.isPresent(id));
+        log.info("Unique guide identifier generated: " + id.getId());
+
+        guide.setId(id);
         guide.setAuthorUsername(myUsername);
         return guideDAO.createGuide(guide);
     }
@@ -128,8 +146,17 @@ public class GuideService {
     public Base62 createCard(CardRequest cardRequest, String myUsername) {
         if (!isUserGuideAuthor(myUsername, cardRequest.getGuideId()))
             throw new AccessDeniedException(myUsername);
-        Card card = new Card(null, cardRequest.getGuideId(), cardRequest.getThumbnailUrl(),
-                cardRequest.getTitle(), cardRequest.getLocation(), cardRequest.getText(), cardRequest.getTags());
+
+        log.info("Generating unique base62 id for card...");
+        Base62 id;
+        do {
+            id = Base62.randomBase62();
+            log.info("Trying identifier " + id.getId());
+        } while (cardDAO.isPresent(id));
+        log.info("Unique card identifier generated: " + id.getId());
+
+        Card card = new Card(id, cardRequest.getGuideId(), cardRequest.getThumbnailUrl(),
+                cardRequest.getTitle(), cardRequest.getLocation(), cardRequest.getContent(), cardRequest.getTags());
         return cardDAO.createCard(card);
     }
 
@@ -153,7 +180,7 @@ public class GuideService {
             return true;
 
         return ids.stream()
-                .map(id -> cardDAO.deleteCardById(id))
+                .map(cardDAO::deleteCardById)
                 .reduce(true, Boolean::logicalAnd);
 
     }
