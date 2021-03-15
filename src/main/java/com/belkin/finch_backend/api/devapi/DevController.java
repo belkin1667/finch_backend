@@ -25,7 +25,7 @@ public class DevController {
 
     private final UserService userService;
     private final ApplicationUserService applicationUserService;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public DevController(UserService userService, ApplicationUserService applicationUserService, PasswordEncoder passwordEncoder) {

@@ -15,7 +15,7 @@ public class Card {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    public static final String DEFAULT_THUMBNAIL_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/%D0%9F%D1%83%D1%82%D0%B8%D0%BD_23.12.20.jpg/416px-%D0%9F%D1%83%D1%82%D0%B8%D0%BD_23.12.20.jpg";
+    public static final String DEFAULT_THUMBNAIL_URL = "2l0yHF5D6rW";
 
     Base62 id;
     Base62 guideId;
