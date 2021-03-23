@@ -153,7 +153,8 @@ public class StartupRunner implements ApplicationRunner {
                 "France",
                 OffsetDateTime.now(ZoneOffset.UTC),
                 OffsetDateTime.now(ZoneOffset.UTC),
-                "sYfqTArhNU4"));
+                "sYfqTArhNU4", List.of("Europe", "France")
+        ));
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("duLzlQcGeHV"),
@@ -161,9 +162,8 @@ public class StartupRunner implements ApplicationRunner {
                 "sUHNzibZiwf",
                 "Rome",
                 "Italy",
-                new Gson().toJson(content),
-                Arrays.asList("tour", "europe", "fun")
-                ));
+                new Gson().toJson(content)
+        ));
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("SboCW3kK4sn"),
@@ -171,12 +171,8 @@ public class StartupRunner implements ApplicationRunner {
                 "2cye96E6YMY",
                 "Florence",
                 "Italy",
-                new Gson().toJson(content),
-                Arrays.asList("tour", "europe", "fun")
+                new Gson().toJson(content)
         ));
-
-
-
 
         guides.add(new Guide("mike",
                 new Base62("ACcvoVo0M58"),
@@ -185,7 +181,9 @@ public class StartupRunner implements ApplicationRunner {
                 "USA",
                 OffsetDateTime.now(ZoneOffset.UTC),
                 OffsetDateTime.now(ZoneOffset.UTC),
-                "WnvxVoFmXgZ"));
+                "WnvxVoFmXgZ",
+                List.of("USA", "NYC")
+        ));
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("ItwAnV4dips"),
@@ -193,8 +191,7 @@ public class StartupRunner implements ApplicationRunner {
                 "WrT6X9L2sSp",
                 "Washington",
                 "USA",
-                new Gson().toJson(content),
-                Arrays.asList("tour", "europe", "fun")
+                new Gson().toJson(content)
         ));
 
         Collections.shuffle(content);
@@ -203,8 +200,7 @@ public class StartupRunner implements ApplicationRunner {
                 "sUHNzibZiwf",
                 "New York",
                 "USA",
-                new Gson().toJson(content),
-                Arrays.asList("tour", "europe", "fun")
+                new Gson().toJson(content)
         ));
 
         Collections.shuffle(content);
@@ -213,12 +209,8 @@ public class StartupRunner implements ApplicationRunner {
                 "2cye96E6YMY",
                 "Florida",
                 "USA",
-                new Gson().toJson(content),
-                Arrays.asList("tour", "europe", "fun")
+                new Gson().toJson(content)
         ));
-
-
-
 
         guides.add(new Guide("johndoe",
                 new Base62("int7gu7yFtA"),
@@ -227,7 +219,9 @@ public class StartupRunner implements ApplicationRunner {
                 "France",
                 OffsetDateTime.now(ZoneOffset.UTC),
                 OffsetDateTime.now(ZoneOffset.UTC),
-                "2cye96E6YMY"));
+                "2cye96E6YMY",
+                List.of("Europe", "France")
+        ));
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("DQGm58bvpSp"),
@@ -235,11 +229,8 @@ public class StartupRunner implements ApplicationRunner {
                 "sUHNzibZiwf",
                 "Rome",
                 "Italy",
-                new Gson().toJson(content),
-                Arrays.asList("tour", "europe", "fun")
+                new Gson().toJson(content)
         ));
-
-
 
         guides.add(new Guide("elon",
                 new Base62("hpM8wkYWrNb"),
@@ -248,7 +239,9 @@ public class StartupRunner implements ApplicationRunner {
                 "France",
                 OffsetDateTime.now(ZoneOffset.UTC),
                 OffsetDateTime.now(ZoneOffset.UTC),
-                "2cye96E6YMY"));
+                "2cye96E6YMY",
+                List.of("Europe", "France")
+        ));
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("hkBRrXIoSef"),
@@ -256,8 +249,7 @@ public class StartupRunner implements ApplicationRunner {
                 "sUHNzibZiwf",
                 "Rome",
                 "Italy",
-                new Gson().toJson(content),
-                Arrays.asList("tour", "europe", "fun")
+                new Gson().toJson(content)
         ));
 
 

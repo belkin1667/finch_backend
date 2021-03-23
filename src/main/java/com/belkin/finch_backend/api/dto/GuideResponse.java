@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Slf4j
 @Getter @Setter
@@ -21,6 +22,7 @@ public class GuideResponse {
     private OffsetDateTime travelDate;
     private String thumbnailUrl;
     private AccessType type;
+    private List<String> tags;
 
     public GuideResponse(Guide guide, AccessType type) {
         log.info("Creating GuideResponse from Guide: " + new Gson().toJson(guide) + " with AccessType = " + type);
@@ -36,6 +38,7 @@ public class GuideResponse {
             this.location = guide.getLocation();
             this.created = guide.getCreatedDate();
             this.travelDate = guide.getTravelDate();
+            this.tags = guide.getTags();
             this.thumbnailUrl = guide.getThumbnailUrl();
         }
 

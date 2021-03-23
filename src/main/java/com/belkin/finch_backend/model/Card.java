@@ -23,9 +23,8 @@ public class Card {
     String title;
     String location;
     String text;
-    List<String> tags;
 
-    public Card(Base62 id, Base62 guideId, String thumbnailUrl, String title, String location, String text, List<String> tags) {
+    public Card(Base62 id, Base62 guideId, String thumbnailUrl, String title, String location, String text) {
         log.info("Creating Card...");
 
         this.id = id;
@@ -33,7 +32,6 @@ public class Card {
         this.title = title;
         this.location = location;
         this.text = text;
-        this.tags = tags;
         if (thumbnailUrl == null) //TODO: url validator
             this.thumbnailUrl = DEFAULT_THUMBNAIL_URL;
         else
@@ -55,8 +53,6 @@ public class Card {
             setTitle(newCard.getTitle());
         if (newCard.getText() != null)
             setText(newCard.getText());
-        if (newCard.getTags() != null)
-            setTags(newCard.getTags());
         if (newCard.getThumbnailUrl() != null)
             setThumbnailUrl(newCard.getThumbnailUrl());
 

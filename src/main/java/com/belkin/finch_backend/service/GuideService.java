@@ -156,7 +156,7 @@ public class GuideService {
         log.info("Unique card identifier generated: " + id.getId());
 
         Card card = new Card(id, cardRequest.getGuideId(), cardRequest.getThumbnailUrl(),
-                cardRequest.getTitle(), cardRequest.getLocation(), cardRequest.getContent(), cardRequest.getTags());
+                cardRequest.getTitle(), cardRequest.getLocation(), cardRequest.getContent());
         return cardDAO.createCard(card);
     }
 

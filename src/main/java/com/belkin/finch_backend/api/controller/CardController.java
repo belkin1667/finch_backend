@@ -62,7 +62,7 @@ public class CardController {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
         Card card = new Card(cardRequest.getId(), cardRequest.getGuideId(),
                 cardRequest.getThumbnailUrl(), cardRequest.getTitle(),
-                cardRequest.getLocation(), cardRequest.getContent(), cardRequest.getTags());
+                cardRequest.getLocation(), cardRequest.getContent());
         boolean result = guideService.editCard(myUsername, card);
 
         if (result)
