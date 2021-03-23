@@ -2,6 +2,7 @@ package com.belkin.finch_backend.api;
 
 import com.belkin.finch_backend.api.dto.ExceptionResponse;
 import com.belkin.finch_backend.exception.MyRestException;
+import com.belkin.finch_backend.security.exception.JwtTokenCanNotBeTrustedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,6 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(value = MyRestException.class)
     protected ResponseEntity<Object> handleMyRestException(MyRestException exception, HttpServletRequest request) {
         log.warn("4xx error occurred. Message: " + exception.getMessage() + ". Status: " + exception.getStatus().value() + " " + exception.getStatus().getReasonPhrase());
-
 
         ExceptionResponse apiError = new ExceptionResponse(exception.getStatus(), exception.getMessage(), request.getServletPath());
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());

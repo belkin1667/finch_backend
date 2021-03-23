@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.belkin.finch_backend.security.ApplicationUserRole.USER;
 
@@ -51,13 +48,22 @@ public class AuthController {
             throw new RuntimeException();
     }
 
+
+    // todo: find the way to configure swagger to work with Filters if such way exists
     // Endpoint /auth/login is managed by JwtAuthenticationFilter,
     // the following method is used to show correct API with Swagger
-    // todo: find the way to configure swagger to work with Filters if such way exists
     @ApiOperation(value="Login the user", notes = "If login is successful, returns JWT Token as 'Bearer <token>' in header 'Authentication', else returns 401 Unauthorized")
     @ResponseHeader(name = "Authentication", description = "Bearer <token>")
     @PostMapping("/login")
     public void login(@RequestBody AuthenticationRequest request) {
+
+    }
+
+    // Endpoint /auth/check is managed by JwtAuthenticationFilter,
+    // the following method is used to show correct API with Swagger
+    @ApiOperation(value = "Check if JWT token is valid")
+    @GetMapping("/check")
+    public void jwtCheck() {
 
     }
 
