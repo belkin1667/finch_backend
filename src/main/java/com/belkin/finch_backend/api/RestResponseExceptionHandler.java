@@ -7,9 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +32,9 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(value = AuthenticationException.class)
-    protected ResponseEntity<Object> handleMyRestException(AuthenticationException exception, HttpServletRequest request) {
-        HttpStatus status = HttpStatus.FORBIDDEN;
+    protected ResponseEntity<Object> handleAuthenticationException(AuthenticationException exception, HttpServletRequest request) {
+
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
         log.warn("4xx Authentication error occurred. Message: " + exception.getMessage() + ". Status: " + status.value() + " " + status.getReasonPhrase());
 
         ExceptionResponse apiError = new ExceptionResponse(status, exception.getMessage(), request.getServletPath());
@@ -36,7 +42,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(value = Exception.class)
-    protected ResponseEntity<Object> handleMyRestException(Exception exception, HttpServletRequest request) {
+    protected ResponseEntity<Object> handleException(Exception exception, HttpServletRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         log.error("5xx error occurred. Message: " + exception.getMessage() + ". Status: " + status.value() + " " + status.getReasonPhrase());
 

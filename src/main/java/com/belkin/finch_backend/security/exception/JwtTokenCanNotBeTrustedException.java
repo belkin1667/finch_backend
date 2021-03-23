@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class JwtTokenCanNotBeTrustedException extends MyRestException {
     public JwtTokenCanNotBeTrustedException(String token) {
-        super(HttpStatus.UNAUTHORIZED, "Token '" + token + "' can not be trusted");
+        super(HttpStatus.FORBIDDEN, "Token '" + token + "' can not be trusted");
     }
 }

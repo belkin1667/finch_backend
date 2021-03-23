@@ -39,7 +39,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
         if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
             log.info("JWS Token is not provided in Authentication Header");
-            throw new JwtTokenWasNotProvidedException();
+            filterChain.doFilter(request, response);
+            return;
         }
 
         String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
