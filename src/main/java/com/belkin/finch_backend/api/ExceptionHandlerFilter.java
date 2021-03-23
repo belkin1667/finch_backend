@@ -2,6 +2,7 @@ package com.belkin.finch_backend.api;
 
 import com.belkin.finch_backend.api.dto.ExceptionResponse;
 import com.belkin.finch_backend.exception.MyRestException;
+import com.belkin.finch_backend.security.exception.JwtTokenCanNotBeTrustedException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +31,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             response.setStatus(e.getStatus().value());
             response.getWriter().write(jsonify(exceptionResponse));
             response.addHeader("Content-Type", "application/json");
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             HttpStatus status = HttpStatus.FORBIDDEN;
             log.warn("4xx Authentication error occurred. Message: " + e.getMessage() + ". Status: " + status.value() + " " + status.getReasonPhrase());
 

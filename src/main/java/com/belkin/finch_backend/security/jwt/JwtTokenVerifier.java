@@ -1,9 +1,9 @@
 package com.belkin.finch_backend.security.jwt;
 
-import com.belkin.finch_backend.security.exception.JwtTokenCanNotBeTrusted;
+import com.belkin.finch_backend.security.exception.JwtTokenCanNotBeTrustedException;
+import com.belkin.finch_backend.security.exception.JwtTokenWasNotProvidedException;
 import com.google.common.base.Strings;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,8 +39,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
         if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
             log.info("JWS Token is not provided in Authentication Header");
-            filterChain.doFilter(request, response);
-            return;
+            throw new JwtTokenWasNotProvidedException();
         }
 
         String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
@@ -56,8 +55,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthoritySet);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("JWS Token is valid");
-        } catch (JwtException e) {
-            throw new JwtTokenCanNotBeTrusted(token);
+        } catch (RuntimeException e) {
+            throw new JwtTokenCanNotBeTrustedException(token);
         }
 
         filterChain.doFilter(request, response);
