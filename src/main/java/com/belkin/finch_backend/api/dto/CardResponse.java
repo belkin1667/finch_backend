@@ -18,19 +18,17 @@ public class CardResponse {
     private String title;
     private String location;
     private String content;
-    private List<String> tags;
-    private AccessType accessType;
+    private AccessType type;
 
     public CardResponse(Card card, AccessType type) {
         log.info("Creating CardResponse from Card: " + new Gson().toJson(card) + " with AccessType = " + type);
-
+        this.type = type;
         this.id = card.getId().toString();
         this.guideId = card.getGuideId().toString();
         this.title = card.getTitle();
         if (type.equals(AccessType.ME_FULL_ACCESS) || type.equals(AccessType.NOT_ME_FULL_ACCESS)) {
             this.location = card.getLocation();
             this.content = card.getText();
-            this.tags = card.getTags();
             this.thumbnailUrl = card.getThumbnailUrl();
         }
 

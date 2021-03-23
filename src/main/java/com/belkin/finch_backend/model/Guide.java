@@ -7,12 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Getter @Setter
 public class Guide {
 
-    public static final String DEFAULT_THUMBNAIL_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/%D0%9F%D1%83%D1%82%D0%B8%D0%BD_23.12.20.jpg/416px-%D0%9F%D1%83%D1%82%D0%B8%D0%BD_23.12.20.jpg";
+    public static final String DEFAULT_THUMBNAIL_URL = "2l0yHF5D6rW";
 
     private Base62 id;
     private String authorUsername;
@@ -22,8 +23,9 @@ public class Guide {
     private OffsetDateTime createdDate;
     private OffsetDateTime travelDate;
     private String thumbnailUrl = DEFAULT_THUMBNAIL_URL;
+    private List<String> tags;
 
-    public Guide(String authorUsername, Base62 id, String title, String description, String location, OffsetDateTime createdDate, OffsetDateTime travelDate, String thumbnailUrl) {
+    public Guide(String authorUsername, Base62 id, String title, String description, String location, OffsetDateTime createdDate, OffsetDateTime travelDate, String thumbnailUrl, List<String> tags) {
         log.info("Creating Guide...");
 
         this.authorUsername = authorUsername;
@@ -37,7 +39,7 @@ public class Guide {
             this.thumbnailUrl = DEFAULT_THUMBNAIL_URL;
         else
             this.thumbnailUrl = thumbnailUrl;
-
+        this.tags = tags;
         log.info("Created guide instance: " + new Gson().toJson(this));
     }
 
@@ -60,6 +62,9 @@ public class Guide {
             setTravelDate(newGuide.getTravelDate());
         if (newGuide.getThumbnailUrl() != null)
             setThumbnailUrl(newGuide.getThumbnailUrl());
+        if (newGuide.getTags() != null) {
+            setTags(newGuide.getTags());
+        }
 
         log.info("Updated guide: " + new Gson().toJson(this));
     }

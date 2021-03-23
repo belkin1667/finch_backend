@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Getter @Setter
 public class GuideRequest {
@@ -17,5 +18,5 @@ public class GuideRequest {
     private String location;
     private OffsetDateTime travelDate;
     private String thumbnailUrl;
-
+    private List<String> tags;
 }

@@ -76,7 +76,7 @@ public class GuideController {
         OffsetDateTime dateNow = OffsetDateTime.now(ZoneOffset.UTC);
         Guide guide = new Guide(myUsername, guideRequest.getId(), guideRequest.getTitle(),
                 guideRequest.getDescription(), guideRequest.getLocation(), dateNow, guideRequest.getTravelDate(),
-                guideRequest.getThumbnailUrl());
+                guideRequest.getThumbnailUrl(), guideRequest.getTags());
         return guideService.addGuide(myUsername, guide);
     }
 
@@ -92,7 +92,7 @@ public class GuideController {
         OffsetDateTime dateNow = OffsetDateTime.now(ZoneOffset.UTC);
         Guide guide = new Guide(myUsername, guideRequest.getId(), guideRequest.getTitle(),
                 guideRequest.getDescription(), guideRequest.getLocation(), dateNow, guideRequest.getTravelDate(),
-                guideRequest.getThumbnailUrl());
+                guideRequest.getThumbnailUrl(), guideRequest.getTags());
         boolean result = guideService.editGuide(myUsername, guide);
 
         Optional<String> res = Optional.ofNullable(result ? "Success" : null);
