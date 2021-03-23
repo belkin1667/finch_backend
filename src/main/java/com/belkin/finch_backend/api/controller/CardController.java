@@ -27,6 +27,14 @@ public class CardController {
         this.jwt = new JwtTokenVerifier(jwtConfig, secretKey);
     }
 
+    @GetMapping(path = "/g/ids/{guide_id}")
+    public List<Base62> getCardIdsByGuideId(@PathVariable("guide_id") Base62 guideId, @RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /card/g/{guide_id}, where guide_id='" + guideId.getId() + "' with header Authorization = '" + authorizationHeader + "'");
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return guideService.getCardsIdsByGuideId(guideId);
+    }
+
+
     @GetMapping(path = "/g/{guide_id}")
     public List<CardResponse> getCardsByGuideId(@PathVariable("guide_id") Base62 guideId, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("GET /card/g/{guide_id}, where guide_id='" + guideId.getId() + "' with header Authorization = '" + authorizationHeader + "'");
