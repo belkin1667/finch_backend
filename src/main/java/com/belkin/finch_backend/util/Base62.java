@@ -79,9 +79,10 @@ public class Base62 {
     public boolean equals(Object obj) {
         if (obj instanceof Base62) {
             Base62 other = (Base62) obj;
-            return id.equals(other.toString());
+            if (this.hashCode() == other.hashCode())
+                return id.equals(other.getId());
         }
-        else return false;
+        return false;
     }
 
     @Override

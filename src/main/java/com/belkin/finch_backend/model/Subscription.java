@@ -21,7 +21,8 @@ public class Subscription {
     public boolean equals(Object obj) {
         if (obj instanceof Subscription) {
             Subscription other = (Subscription) obj;
-            return username.equals(other.getUsername()) && subscriber.equals(other.getSubscriber());
+            if (this.hashCode() == other.hashCode())
+                return username.equals(other.getUsername()) && subscriber.equals(other.getSubscriber());
         }
         return false;
     }
