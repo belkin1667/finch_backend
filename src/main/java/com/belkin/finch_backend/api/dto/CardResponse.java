@@ -1,6 +1,7 @@
 package com.belkin.finch_backend.api.dto;
 
 import com.belkin.finch_backend.model.Card;
+import com.belkin.finch_backend.model.Content;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ public class CardResponse {
     private String thumbnailUrl = Card.DEFAULT_THUMBNAIL_URL;
     private String title;
     private String location;
-    private String content;
+    private List<Content> content;
     private AccessType type;
 
     public CardResponse(Card card, AccessType type) {
@@ -28,7 +29,7 @@ public class CardResponse {
         this.title = card.getTitle();
         if (type.equals(AccessType.ME_FULL_ACCESS) || type.equals(AccessType.NOT_ME_FULL_ACCESS)) {
             this.location = card.getLocation();
-            this.content = card.getText();
+            this.content = card.getContent();
             this.thumbnailUrl = card.getThumbnailUrl();
         }
 
