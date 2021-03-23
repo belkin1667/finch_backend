@@ -6,11 +6,13 @@ import com.belkin.finch_backend.dao.interfaces.CardDAO;
 import com.belkin.finch_backend.dao.interfaces.GuideDAO;
 import com.belkin.finch_backend.api.dto.AccessType;
 import com.belkin.finch_backend.api.dto.GuideResponse;
+import com.belkin.finch_backend.dao.interfaces.GuideLikeDAO;
 import com.belkin.finch_backend.exception.AccessDeniedException;
 import com.belkin.finch_backend.exception.notfound.CardNotFoundException;
 import com.belkin.finch_backend.exception.notfound.GuideNotFoundException;
 import com.belkin.finch_backend.model.Card;
 import com.belkin.finch_backend.model.Guide;
+import com.belkin.finch_backend.model.Like;
 import com.belkin.finch_backend.util.Base62;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -30,13 +32,17 @@ public class GuideService {
 
     private final GuideDAO guideDAO;
     private final CardDAO cardDAO;
+    private final GuideLikeDAO guideLikesDAO;
     private final UserService userService;
 
     @Autowired
     public GuideService(@Qualifier("guide_fake") GuideDAO guideDAO,
-                        CardDAO cardDAO, UserService userService) {
+                        @Qualifier("card_fake") CardDAO cardDAO,
+                        @Qualifier("guide_like_fake") GuideLikeDAO guideLikesDAO,
+                        UserService userService) {
         this.guideDAO = guideDAO;
         this.cardDAO = cardDAO;
+        this.guideLikesDAO = guideLikesDAO;
         this.userService = userService;
     }
 
@@ -49,7 +55,11 @@ public class GuideService {
 
         log.info("Guide " + new Gson().toJson(guide));
 
-        return new GuideResponse(guide, guide.getAuthorUsername().equals(myUsername) ? AccessType.ME_FULL_ACCESS : AccessType.NOT_ME_FULL_ACCESS);
+        GuideResponse guideResponse = new GuideResponse(guide,
+                guide.getAuthorUsername().equals(myUsername) ? AccessType.ME_FULL_ACCESS : AccessType.NOT_ME_FULL_ACCESS,
+                guideLikesDAO.isPresent(new Like(myUsername, guideId)),
+                guideLikesDAO.getLikesNumber(guideId));
+        return guideResponse;
     }
 
     public List<GuideResponse> getGuidesPreviewByUsername(String myUsername, String requestedUsername) {
@@ -61,7 +71,11 @@ public class GuideService {
             accessType = AccessType.NOT_ME_PARTIAL_ACCESS;
         }
         return requestedGuides.stream()
-                .map(g -> new GuideResponse(g, accessType))
+                .map(g ->
+                        new GuideResponse(g,
+                                accessType,
+                                guideLikesDAO.isPresent(new Like(myUsername, g.getId())),
+                                guideLikesDAO.getLikesNumber(g.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +84,11 @@ public class GuideService {
         AccessType accessType = userService.getAccessType(myUsername, requestedUsername);
         if (accessType != null)
             return requestedGuides.stream()
-                    .map(g -> new GuideResponse(g, accessType))
+                    .map(g ->
+                            new GuideResponse(g,
+                                    accessType,
+                                    guideLikesDAO.isPresent(new Like(myUsername, g.getId())),
+                                    guideLikesDAO.getLikesNumber(g.getId())))
                     .collect(Collectors.toList());
         else
             return null;
@@ -204,5 +222,17 @@ public class GuideService {
         return getGuidesOfSubscriptionsOfUser(myUsername).stream()
                 .map(GuideResponse::getId)
                 .collect(Collectors.toList());
+    }
+
+    public boolean likeGuide(String myUsername, Base62 id) {
+        return guideLikesDAO.addLike(new Like(myUsername, id));
+    }
+
+    public boolean unlikeGuide(String myUsername, Base62 id) {
+        return guideLikesDAO.removeLike(new Like(myUsername, id));
+    }
+
+    public boolean hasLike(String myUsername, Base62 id) {
+        return guideLikesDAO.isPresent(new Like(myUsername, id));
     }
 }

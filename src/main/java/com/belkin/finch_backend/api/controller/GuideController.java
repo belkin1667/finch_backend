@@ -112,4 +112,37 @@ public class GuideController {
     }
 
 
+
+
+
+    /* ============== LIKES ============== */
+
+    @GetMapping("/likes/{id}")
+    public boolean hasLike(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return guideService.hasLike(myUsername, id);
+    }
+
+    @PostMapping("/likes/{id}")
+    public String like(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        boolean result = guideService.likeGuide(myUsername, id);
+
+        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
+        return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
+    }
+
+
+    @DeleteMapping("/likes/{id}")
+    public String unlike(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        boolean result = guideService.unlikeGuide(myUsername, id);
+
+        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
+        return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
+    }
+
+
 }

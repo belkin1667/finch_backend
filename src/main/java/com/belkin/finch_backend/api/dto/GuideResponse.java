@@ -23,11 +23,17 @@ public class GuideResponse {
     private String thumbnailUrl;
     private AccessType type;
     private List<String> tags;
+    private Boolean liked = null;
+    private Integer likesnum = -1;
+
+    public GuideResponse(Guide guide, AccessType type, Boolean liked, int likesnum) {
+        this(guide, type);
+        this.liked = liked;
+        this.likesnum = likesnum;
+    }
 
     public GuideResponse(Guide guide, AccessType type) {
         log.info("Creating GuideResponse from Guide: " + new Gson().toJson(guide) + " with AccessType = " + type);
-
-
         this.id = guide.getId().toString();
         this.thumbnailUrl = Guide.DEFAULT_THUMBNAIL_URL;
         this.type = type;
