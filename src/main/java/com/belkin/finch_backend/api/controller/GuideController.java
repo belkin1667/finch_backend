@@ -115,7 +115,7 @@ public class GuideController {
 
 
 
-    /* ============== LIKES ============== */
+    /* ========================= LIKES ========================= */
 
     @GetMapping("/likes/{id}")
     public boolean hasLike(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
@@ -144,5 +144,38 @@ public class GuideController {
         return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
     }
 
+
+
+    /* ========================= FAVORITES ========================= */
+
+    @GetMapping("/favourites")
+    public List<Base62> getFavourites(@RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return guideService.getUserFavourites(myUsername);
+    }
+
+    @GetMapping("/favourites/{id}")
+    public boolean hasFavor(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return guideService.hasFavor(myUsername, id);
+    }
+
+    @PostMapping("/favourites/{id}")
+    public String favor(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        boolean result = guideService.favorGuide(myUsername, id);
+
+        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
+        return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
+    }
+
+    @DeleteMapping("/favourites/{id}")
+    public String unfavor(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        boolean result = guideService.unfavorGuide(myUsername, id);
+
+        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
+        return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
+    }
 
 }

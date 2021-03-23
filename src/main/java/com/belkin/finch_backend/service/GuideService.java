@@ -33,16 +33,19 @@ public class GuideService {
     private final GuideDAO guideDAO;
     private final CardDAO cardDAO;
     private final GuideLikeDAO guideLikesDAO;
+    private final GuideLikeDAO guideFavorDAO;
     private final UserService userService;
 
     @Autowired
     public GuideService(@Qualifier("guide_fake") GuideDAO guideDAO,
                         @Qualifier("card_fake") CardDAO cardDAO,
                         @Qualifier("guide_like_fake") GuideLikeDAO guideLikesDAO,
+                        @Qualifier("guide_favor_fake") GuideLikeDAO guideFavorDAO,
                         UserService userService) {
         this.guideDAO = guideDAO;
         this.cardDAO = cardDAO;
         this.guideLikesDAO = guideLikesDAO;
+        this.guideFavorDAO = guideFavorDAO;
         this.userService = userService;
     }
 
@@ -58,7 +61,8 @@ public class GuideService {
         GuideResponse guideResponse = new GuideResponse(guide,
                 guide.getAuthorUsername().equals(myUsername) ? AccessType.ME_FULL_ACCESS : AccessType.NOT_ME_FULL_ACCESS,
                 guideLikesDAO.isPresent(new Like(myUsername, guideId)),
-                guideLikesDAO.getLikesNumber(guideId));
+                guideLikesDAO.getLikesNumber(guideId),
+                guideFavorDAO.isPresent(new Like(myUsername, guideId)));
         return guideResponse;
     }
 
@@ -75,7 +79,8 @@ public class GuideService {
                         new GuideResponse(g,
                                 accessType,
                                 guideLikesDAO.isPresent(new Like(myUsername, g.getId())),
-                                guideLikesDAO.getLikesNumber(g.getId())))
+                                guideLikesDAO.getLikesNumber(g.getId()),
+                                guideFavorDAO.isPresent(new Like(myUsername, g.getId()))))
                 .collect(Collectors.toList());
     }
 
@@ -88,7 +93,8 @@ public class GuideService {
                             new GuideResponse(g,
                                     accessType,
                                     guideLikesDAO.isPresent(new Like(myUsername, g.getId())),
-                                    guideLikesDAO.getLikesNumber(g.getId())))
+                                    guideLikesDAO.getLikesNumber(g.getId()),
+                                    guideFavorDAO.isPresent(new Like(myUsername, g.getId()))))
                     .collect(Collectors.toList());
         else
             return null;
@@ -141,7 +147,7 @@ public class GuideService {
     }
 
 
-    // ========================= Card API ========================= //
+    /* ========================= Card API ========================= */
 
     public CardResponse getCardById(String myUsername, Base62 id) {
         Base62 guideId = getGuideIdByCardId(id);
@@ -224,6 +230,9 @@ public class GuideService {
                 .collect(Collectors.toList());
     }
 
+
+    /* ========================= Likes API ========================= */
+
     public boolean likeGuide(String myUsername, Base62 id) {
         return guideLikesDAO.addLike(new Like(myUsername, id));
     }
@@ -234,5 +243,24 @@ public class GuideService {
 
     public boolean hasLike(String myUsername, Base62 id) {
         return guideLikesDAO.isPresent(new Like(myUsername, id));
+
+    }
+
+    /* ========================= Favourites API ========================= */
+
+    public boolean favorGuide(String myUsername, Base62 id) {
+        return guideFavorDAO.addLike(new Like(myUsername, id));
+    }
+
+    public boolean unfavorGuide(String myUsername, Base62 id) {
+        return guideFavorDAO.removeLike(new Like(myUsername, id));
+    }
+
+    public boolean hasFavor(String myUsername, Base62 id) {
+        return guideFavorDAO.isPresent(new Like(myUsername, id));
+    }
+
+    public List<Base62> getUserFavourites(String myUsername) {
+        return guideFavorDAO.getLiked(myUsername);
     }
 }
