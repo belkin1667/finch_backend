@@ -25,11 +25,13 @@ public class GuideResponse {
     private List<String> tags;
     private Boolean liked = null;
     private Integer likesnum = -1;
+    private Boolean favourite = null;
 
-    public GuideResponse(Guide guide, AccessType type, Boolean liked, int likesnum) {
+    public GuideResponse(Guide guide, AccessType type, Boolean liked, int likesnum, Boolean favourite) {
         this(guide, type);
         this.liked = liked;
         this.likesnum = likesnum;
+        this.favourite = favourite;
     }
 
     public GuideResponse(Guide guide, AccessType type) {

@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@Repository("guide_like_fake")
-public class FakeGuideLikeDataAccessService implements GuideLikeDAO {
+@Repository("guide_favor_fake")
+public class FakeGuideFavorDataAccessService implements GuideLikeDAO {
 
     List<Like> database = new ArrayList<>();
 
@@ -46,7 +46,6 @@ public class FakeGuideLikeDataAccessService implements GuideLikeDAO {
                 .map(Like::getGuideId)
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public int getLikesNumber(Base62 id) {

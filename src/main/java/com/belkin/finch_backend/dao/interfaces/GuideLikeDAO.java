@@ -13,6 +13,8 @@ public interface GuideLikeDAO {
 
     List<String> getLikers(Base62 id);
 
+    List<Base62> getLiked(String liker);
+
     int getLikesNumber(Base62 id);
 
     boolean isPresent(Like like);
