@@ -7,7 +7,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
@@ -31,8 +35,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             response.setStatus(e.getStatus().value());
             response.getWriter().write(jsonify(exceptionResponse));
             response.addHeader("Content-Type", "application/json");
-        } catch (AuthenticationException e) {
-            HttpStatus status = HttpStatus.FORBIDDEN;
+        }
+        catch (AuthenticationException e) {
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
             log.warn("4xx Authentication error occurred. Message: " + e.getMessage() + ". Status: " + status.value() + " " + status.getReasonPhrase());
 
             ExceptionResponse exceptionResponse = new ExceptionResponse(status, e.getMessage(), request.getServletPath());

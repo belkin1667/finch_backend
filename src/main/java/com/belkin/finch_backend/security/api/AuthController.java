@@ -2,6 +2,7 @@ package com.belkin.finch_backend.security.api;
 
 import com.belkin.finch_backend.model.User;
 import com.belkin.finch_backend.security.dto.RegistrationRequest;
+import com.belkin.finch_backend.security.exception.JwtTokenWasNotProvidedException;
 import com.belkin.finch_backend.security.exception.UserAlreadyRegisteredException;
 import com.belkin.finch_backend.security.jwt.dto.AuthenticationRequest;
 import com.belkin.finch_backend.security.model.ApplicationUser;
@@ -63,8 +64,9 @@ public class AuthController {
     // the following method is used to show correct API with Swagger
     @ApiOperation(value = "Check if JWT token is valid")
     @GetMapping("/check")
-    public void jwtCheck() {
-
+    public void jwtCheck(@RequestHeader("Authorization") String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer "))
+            throw new JwtTokenWasNotProvidedException();
     }
 
 }
