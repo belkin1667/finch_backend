@@ -5,11 +5,6 @@ import com.belkin.finch_backend.model.*;
 import com.belkin.finch_backend.security.dao.ApplicationUserDAO;
 import com.belkin.finch_backend.security.model.ApplicationUser;
 import com.belkin.finch_backend.util.Base62;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -18,13 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -157,12 +150,13 @@ public class StartupRunner implements ApplicationRunner {
         ));
 
         Collections.shuffle(content);
+
         cards.add(new Card(new Base62("duLzlQcGeHV"),
                 new Base62 ("XgKGSVikuD2"),
                 "sUHNzibZiwf",
                 "Rome",
                 "Italy",
-                new Gson().toJson(content)
+                content
         ));
 
         Collections.shuffle(content);
@@ -171,7 +165,7 @@ public class StartupRunner implements ApplicationRunner {
                 "2cye96E6YMY",
                 "Florence",
                 "Italy",
-                new Gson().toJson(content)
+                content
         ));
 
         guides.add(new Guide("mike",
@@ -191,7 +185,7 @@ public class StartupRunner implements ApplicationRunner {
                 "WrT6X9L2sSp",
                 "Washington",
                 "USA",
-                new Gson().toJson(content)
+                content
         ));
 
         Collections.shuffle(content);
@@ -200,7 +194,7 @@ public class StartupRunner implements ApplicationRunner {
                 "sUHNzibZiwf",
                 "New York",
                 "USA",
-                new Gson().toJson(content)
+                content
         ));
 
         Collections.shuffle(content);
@@ -209,7 +203,7 @@ public class StartupRunner implements ApplicationRunner {
                 "2cye96E6YMY",
                 "Florida",
                 "USA",
-                new Gson().toJson(content)
+                content
         ));
 
         guides.add(new Guide("johndoe",
@@ -229,7 +223,7 @@ public class StartupRunner implements ApplicationRunner {
                 "sUHNzibZiwf",
                 "Rome",
                 "Italy",
-                new Gson().toJson(content)
+                content
         ));
 
         guides.add(new Guide("elon",
@@ -249,7 +243,7 @@ public class StartupRunner implements ApplicationRunner {
                 "sUHNzibZiwf",
                 "Rome",
                 "Italy",
-                new Gson().toJson(content)
+                content
         ));
 
 
