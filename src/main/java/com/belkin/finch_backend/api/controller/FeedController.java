@@ -1,6 +1,7 @@
 package com.belkin.finch_backend.api.controller;
 
 
+import com.belkin.finch_backend.api.dto.FeedGuideResponse;
 import com.belkin.finch_backend.api.dto.GuideResponse;
 import com.belkin.finch_backend.model.Guide;
 import com.belkin.finch_backend.security.jwt.JwtConfig;
@@ -27,23 +28,21 @@ import java.util.stream.Collectors;
 @RequestMapping("feed")
 public class FeedController {
 
-    private final UserService userService;
     private final GuideService guideService;
     private final JwtTokenVerifier jwt;
 
     @Autowired
-    public FeedController(UserService userService, GuideService guideService, JwtConfig jwtConfig, SecretKey secretKey) {
-        this.userService = userService;
+    public FeedController(GuideService guideService, JwtConfig jwtConfig, SecretKey secretKey) {
         this.guideService = guideService;
         this.jwt = new JwtTokenVerifier(jwtConfig, secretKey);
     }
 
     @GetMapping
-    public List<String> getFeed(@RequestHeader("Authorization") String authorizationHeader) {
+    public List<FeedGuideResponse> getFeed(@RequestHeader("Authorization") String authorizationHeader) {
         log.info("GET /feed with header Authorization = " + authorizationHeader);
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        return guideService.getGuideIdsOfSubscriptionsOfUser(myUsername);
+        return guideService.getFeedGuideOfSubscriptionsOfUser(myUsername);
     }
 
     @GetMapping("/full")

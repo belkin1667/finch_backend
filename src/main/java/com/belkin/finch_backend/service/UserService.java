@@ -128,4 +128,8 @@ public class UserService {
         Subscription s = new Subscription(subscription, myUsername);
         return subsDao.removeSubscription(s);
     }
+
+    public String getUserProfilePhotoUrlByUsername(String username) {
+        return getUserByUsername(username).getProfilePhotoUrl();
+    }
 }

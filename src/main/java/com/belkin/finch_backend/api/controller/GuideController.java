@@ -47,7 +47,7 @@ public class GuideController {
 
     @ApiOperation(value = "Return user's guides by username", notes = "If {username} == 'me', current authenticated user's guide is returned")
     @GetMapping(path = "/u/{username}")
-    public List<GuideResponse> getUserGuides(@PathVariable("username") String requestedUsername, @RequestHeader("Authorization") String authorizationHeader) {
+    public List<String> getUserGuides(@PathVariable("username") String requestedUsername, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("GET /guides/u/{username}, where username='" + requestedUsername + "' with header Authorization = '" + authorizationHeader + "'");
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
@@ -55,8 +55,8 @@ public class GuideController {
         if (requestedUsername.equals("me"))
             requestedUsername = myUsername;
 
-        /* todo: return [{guideId, username}, ...] */
-        return guideService.getGuidesByUsername(myUsername, requestedUsername);
+        //return guideService.getGuidesByUsername(myUsername, requestedUsername);
+        return guideService.getGuideIdsByUsername(requestedUsername);
     }
 
 

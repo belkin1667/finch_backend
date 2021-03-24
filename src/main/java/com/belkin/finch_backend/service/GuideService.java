@@ -1,11 +1,8 @@
 package com.belkin.finch_backend.service;
 
-import com.belkin.finch_backend.api.dto.CardRequest;
-import com.belkin.finch_backend.api.dto.CardResponse;
+import com.belkin.finch_backend.api.dto.*;
 import com.belkin.finch_backend.dao.interfaces.CardDAO;
 import com.belkin.finch_backend.dao.interfaces.GuideDAO;
-import com.belkin.finch_backend.api.dto.AccessType;
-import com.belkin.finch_backend.api.dto.GuideResponse;
 import com.belkin.finch_backend.dao.interfaces.GuideLikeDAO;
 import com.belkin.finch_backend.exception.AccessDeniedException;
 import com.belkin.finch_backend.exception.notfound.CardNotFoundException;
@@ -82,6 +79,14 @@ public class GuideService {
                                 guideLikesDAO.getLikesNumber(g.getId()),
                                 guideFavorDAO.isPresent(new Like(myUsername, g.getId()))))
                 .collect(Collectors.toList());
+    }
+
+    public List<String> getGuideIdsByUsername(String requestedUsername) {
+        List<String> guides = guideDAO.readAllGuidesByAuthorUsername(requestedUsername).stream()
+                .map(Guide::getId)
+                .map(Base62::getId)
+                .collect(Collectors.toList());
+        return guides;
     }
 
     public List<GuideResponse> getGuidesByUsername(String myUsername, String requestedUsername) {
@@ -217,6 +222,7 @@ public class GuideService {
     public List<GuideResponse> getGuidesOfSubscriptionsOfUser(String myUsername) {
         List<GuideResponse> guides = new ArrayList<>();
         Set<String> subs = userService.getSubscriptions(myUsername);
+        subs.add(myUsername);
         for (String sub : subs) {
             guides.addAll(getGuidesByUsername(myUsername, sub));
         }
@@ -228,6 +234,12 @@ public class GuideService {
         return getGuidesOfSubscriptionsOfUser(myUsername).stream()
                 .map(GuideResponse::getId)
                 .collect(Collectors.toList());
+    }
+
+    public List<FeedGuideResponse> getFeedGuideOfSubscriptionsOfUser(String myUsername) {
+        return getGuidesOfSubscriptionsOfUser(myUsername).stream()
+            .map(g -> new FeedGuideResponse(g.getId(), g.getAuthorUsername(), userService.getUserProfilePhotoUrlByUsername(g.getAuthorUsername())))
+            .collect(Collectors.toList());
     }
 
 
