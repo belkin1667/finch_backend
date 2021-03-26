@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Repository("guide_favor_fake")
 public class FakeGuideFavorDataAccessService implements GuideLikeDAO {
 

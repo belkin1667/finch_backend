@@ -3,7 +3,6 @@ package com.belkin.finch_backend.security.dao;
 import com.belkin.finch_backend.security.model.ApplicationUser;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

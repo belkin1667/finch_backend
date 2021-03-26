@@ -1,11 +1,8 @@
 package com.belkin.finch_backend.security.api;
 
-import com.belkin.finch_backend.model.User;
 import com.belkin.finch_backend.security.dto.RegistrationRequest;
 import com.belkin.finch_backend.security.exception.JwtTokenWasNotProvidedException;
-import com.belkin.finch_backend.security.exception.UserAlreadyRegisteredException;
 import com.belkin.finch_backend.security.jwt.dto.AuthenticationRequest;
-import com.belkin.finch_backend.security.model.ApplicationUser;
 import com.belkin.finch_backend.security.service.ApplicationUserService;
 import com.belkin.finch_backend.service.UserService;
 import com.google.gson.Gson;
@@ -14,11 +11,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ResponseHeader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import static com.belkin.finch_backend.security.ApplicationUserRole.USER;
 
 @Slf4j
 @RestController

@@ -1,5 +1,6 @@
 package com.belkin.finch_backend.api.controller;
 
+import com.belkin.finch_backend.api.dto.FeedGuideResponse;
 import com.belkin.finch_backend.api.dto.GuideRequest;
 import com.belkin.finch_backend.api.dto.GuideResponse;
 import com.belkin.finch_backend.model.Guide;
@@ -11,7 +12,6 @@ import com.google.gson.Gson;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
@@ -151,7 +151,7 @@ public class GuideController {
     /* ========================= FAVORITES ========================= */
 
     @GetMapping("/favourites")
-    public List<Base62> getFavourites(@RequestHeader("Authorization") String authorizationHeader) {
+    public List<FeedGuideResponse> getFavourites(@RequestHeader("Authorization") String authorizationHeader) {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
         return guideService.getUserFavourites(myUsername);
     }

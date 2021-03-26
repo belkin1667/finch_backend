@@ -4,11 +4,6 @@ import com.google.gson.Gson;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 @Slf4j
 @Getter @Setter
 @AllArgsConstructor @RequiredArgsConstructor

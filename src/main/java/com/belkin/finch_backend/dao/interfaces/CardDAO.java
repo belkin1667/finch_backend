@@ -5,7 +5,6 @@ import com.belkin.finch_backend.util.Base62;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface CardDAO {
 

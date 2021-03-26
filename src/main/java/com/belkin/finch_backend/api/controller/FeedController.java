@@ -1,14 +1,10 @@
 package com.belkin.finch_backend.api.controller;
 
-
 import com.belkin.finch_backend.api.dto.FeedGuideResponse;
 import com.belkin.finch_backend.api.dto.GuideResponse;
-import com.belkin.finch_backend.model.Guide;
 import com.belkin.finch_backend.security.jwt.JwtConfig;
 import com.belkin.finch_backend.security.jwt.JwtTokenVerifier;
 import com.belkin.finch_backend.service.GuideService;
-import com.belkin.finch_backend.service.UserService;
-import com.belkin.finch_backend.util.Base62;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.SecretKey;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
