@@ -2,19 +2,13 @@ package com.belkin.finch_backend.api;
 
 import com.belkin.finch_backend.api.dto.ExceptionResponse;
 import com.belkin.finch_backend.exception.MyRestException;
-import com.belkin.finch_backend.security.exception.JwtTokenCanNotBeTrustedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.MissingRequestHeaderException;
-import org.springframework.web.bind.ServletRequestBindingException;
-import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;

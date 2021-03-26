@@ -1,7 +1,6 @@
 package com.belkin.finch_backend.security.dao;
 
 import com.belkin.finch_backend.security.model.ApplicationUser;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;

@@ -6,6 +6,7 @@ import com.belkin.finch_backend.security.dao.ApplicationUserDAO;
 import com.belkin.finch_backend.security.model.ApplicationUser;
 import com.belkin.finch_backend.util.Base62;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -28,12 +29,22 @@ import static com.belkin.finch_backend.security.ApplicationUserRole.USER;
 public class StartupRunner implements ApplicationRunner {
 
     @Autowired
-    public StartupRunner(UserDAO userDAO, GuideDAO guideDAO, CardDAO cardDAO, ImageMetadataDAO imageDAO, SubsDAO subsDAO, ApplicationUserDAO applicationUserDAO, PasswordEncoder passwordEncoder) {
+    public StartupRunner(UserDAO userDAO,
+                         GuideDAO guideDAO,
+                         CardDAO cardDAO,
+                         ImageMetadataDAO imageDAO,
+                         SubsDAO subsDAO,
+                         @Qualifier("guide_favor_fake") GuideLikeDAO guideFavorDAO,
+                         @Qualifier("guide_like_fake") GuideLikeDAO guideLikeDAO,
+                         ApplicationUserDAO applicationUserDAO,
+                         PasswordEncoder passwordEncoder) {
         this.userDAO = userDAO;
         this.guideDAO = guideDAO;
         this.cardDAO = cardDAO;
         this.imageDAO = imageDAO;
         this.subsDAO = subsDAO;
+        this.guideFavorDAO = guideFavorDAO;
+        this.guideLikeDAO = guideLikeDAO;
         this.applicationUserDAO = applicationUserDAO;
         this.passwordEncoder = passwordEncoder;
     }
@@ -50,6 +61,8 @@ public class StartupRunner implements ApplicationRunner {
     private final CardDAO cardDAO;
     private final ImageMetadataDAO imageDAO;
     private final SubsDAO subsDAO;
+    private final GuideLikeDAO guideLikeDAO;
+    private final GuideLikeDAO guideFavorDAO;
     private final ApplicationUserDAO applicationUserDAO;
     private final PasswordEncoder passwordEncoder;
 
@@ -247,6 +260,19 @@ public class StartupRunner implements ApplicationRunner {
         ));
 
 
+        List<Like> likes = new ArrayList<>();
+        likes.add(new Like("mike", new Base62("int7gu7yFtA")));
+        likes.add(new Like("mike", new Base62("hpM8wkYWrNb")));
+        likes.add(new Like("elon", new Base62("XgKGSVikuD2")));
+        likes.add(new Like("elon", new Base62("ACcvoVo0M58")));
+        likes.add(new Like("johndoe", new Base62("XgKGSVikuD2")));
+        likes.add(new Like("donald", new Base62("XgKGSVikuD2")));
+
+        List<Like> favourites = new ArrayList<>();
+        favourites.add(new Like("elon", new Base62("int7gu7yFtA")));
+        favourites.add(new Like("elon", new Base62("XgKGSVikuD2")));
+        favourites.add(new Like("elon", new Base62("ACcvoVo0M58")));
+
         for (User user : users) {
             userDAO.createUser(user);
         }
@@ -265,7 +291,12 @@ public class StartupRunner implements ApplicationRunner {
         for (Subscription sub : subs) {
             subsDAO.addSubscription(sub);
         }
-
+        for (Like like : likes) {
+            guideLikeDAO.addLike(like);
+        }
+        for (Like favor : favourites) {
+            guideFavorDAO.addLike(favor);
+        }
     }
 
     private void createImageDirectory() throws IOException {

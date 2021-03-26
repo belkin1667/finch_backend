@@ -1,6 +1,5 @@
 package com.belkin.finch_backend.api.dto;
 
-
 import com.belkin.finch_backend.model.Content;
 import com.belkin.finch_backend.util.Base62;
 import lombok.Getter;

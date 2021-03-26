@@ -2,11 +2,9 @@ package com.belkin.finch_backend.api.dto;
 
 import com.belkin.finch_backend.util.Base62;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter @Setter

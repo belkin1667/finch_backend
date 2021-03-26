@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -112,7 +109,6 @@ public class GuideService {
 
     public GuideResponse getGuideByCardId(Base62 cardId, String myUsername) {
         Base62 guideId = getGuideIdByCardId(cardId);
-        ;
         return getGuideById(myUsername, guideId);
     }
 
@@ -272,7 +268,23 @@ public class GuideService {
         return guideFavorDAO.isPresent(new Like(myUsername, id));
     }
 
-    public List<Base62> getUserFavourites(String myUsername) {
-        return guideFavorDAO.getLiked(myUsername);
+    public List<FeedGuideResponse> getUserFavourites(String myUsername) {
+        return guideFavorDAO.getLiked(myUsername).stream()
+                .map(this::idToFeedGuideResponseMapper)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
+
+    private FeedGuideResponse idToFeedGuideResponseMapper(Base62 id) {
+        Optional<Guide> maybeGuide = guideDAO.readGuideById(id);
+        if(maybeGuide.isPresent()) {
+            String username = maybeGuide.get().getAuthorUsername();
+            String profilePhoto = userService.getUserProfilePhotoUrlByUsername(username);
+            return new FeedGuideResponse(id.getId(), username, profilePhoto);
+        }
+        else {
+            return null;
+        }
+    }
+
 }
