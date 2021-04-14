@@ -9,5 +9,6 @@ RUN gradle build --no-daemon
 FROM openjdk:11
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/finch_backend-0.0.1-SNAPSHOT.jar
+COPY gcpkey.json /app/gcpkey.json
 EXPOSE 8080
 ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/finch_backend-0.0.1-SNAPSHOT.jar"]
