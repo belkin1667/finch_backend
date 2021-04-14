@@ -2,19 +2,15 @@ package com.belkin.finch_backend.dao.interfaces;
 
 import com.belkin.finch_backend.model.ImageMetadata;
 import com.belkin.finch_backend.util.Base62;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ImageMetadataDAO {
+@Repository("database_image")
+public interface ImageMetadataDAO extends CrudRepository<ImageMetadata, Base62> {
 
-    boolean isPresent(Base62 id);
-
-    List<ImageMetadata> getAllImages();
-
-    void addImage(ImageMetadata image);
-
-    boolean deleteImage(Base62 id);
-
-    Optional<ImageMetadata> getImageById(Base62 id);
 }
+
+

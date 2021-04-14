@@ -61,7 +61,7 @@ public class UserController {
             "(Preferred) 1. Provide only updated fields of the entity, which means you shall omit fields (or provide null value) which aren't supposed to be updated\n\r" +
             "2. Provide all fields of the entity: provide old values for non-updated fields and new values for updated fields")
     @PutMapping(path = "/me")
-    public String updateMe(@RequestBody UserRequest userRequest, @RequestHeader("Authorization") String authorizationHeader) {
+    public void updateMe(@RequestBody UserRequest userRequest, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("PUT /users/me with header Authorization = '" + authorizationHeader + "' and Body: " + gson.toJson(userRequest));
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
@@ -69,23 +69,18 @@ public class UserController {
         User updatedUser = userRequest.getUser(userService.getUserByUsername(myUsername));
         ApplicationUser updatedApplicationUser = userRequest.getApplicationUser(applicationUserService.getUserByUsername(myUsername));
 
-        boolean result = userService.updateUser(myUsername, updatedUser) &&
-                applicationUserService.updateUser(myUsername, updatedApplicationUser);
-
-        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
-        return res.orElseThrow(() -> new RuntimeException("User update failed"));
+        updatedUser = userService.updateUser(myUsername, updatedUser);
+        updatedApplicationUser = applicationUserService.updateUser(myUsername, updatedApplicationUser);
     }
 
     @ApiOperation(value = "Delete user", notes = "200 OK if success, 500 Internal Server Error if fail")
     @DeleteMapping(path = "/me")
-    public String deleteMe(@RequestHeader("Authorization") String authorizationHeader) {
+    public void deleteMe(@RequestHeader("Authorization") String authorizationHeader) {
         log.info("DELETE /users/me  with header Authorization = '" + authorizationHeader + "'");
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        boolean result = userService.deleteUser(myUsername) && applicationUserService.deleteUser(myUsername);
-
-        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
-        return res.orElseThrow(() -> new RuntimeException("User delete failed"));
+        userService.deleteUser(myUsername);
+        applicationUserService.deleteUser(myUsername);
     }
 
 
@@ -106,27 +101,19 @@ public class UserController {
     }
 
     @PostMapping(path = "/subs/{username}")
-    public String subscribe(@PathVariable("username") String subscription, @RequestHeader("Authorization") String authorizationHeader) {
+    public void subscribe(@PathVariable("username") String subscription, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("POST /users/subs/{username}, where username='" + subscription + "' with header Authorization = '" + authorizationHeader + "'");
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        boolean result = userService.subscribe(myUsername, subscription);
-        if (result)
-            return "Success";
-        else
-            throw new RuntimeException();
+        userService.subscribe(myUsername, subscription);
     }
 
     @DeleteMapping(path = "/subs/{username}")
-    public String unsubscribe(@PathVariable("username") String subscription, @RequestHeader("Authorization") String authorizationHeader) {
+    public void unsubscribe(@PathVariable("username") String subscription, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("DELETE /users/subs/{username}, where username='" + subscription + "' with header Authorization = '" + authorizationHeader + "'");
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        boolean result = userService.unsubscribe(myUsername, subscription);
-        if (result)
-            return "Success";
-        else
-            throw new RuntimeException();
+        userService.unsubscribe(myUsername, subscription);
     }
 
 }

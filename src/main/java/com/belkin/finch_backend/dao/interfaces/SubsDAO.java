@@ -1,26 +1,26 @@
 package com.belkin.finch_backend.dao.interfaces;
 
 import com.belkin.finch_backend.model.Subscription;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
-public interface SubsDAO {
+@Repository("database_subs")
+public interface SubsDAO extends CrudRepository<Subscription, Integer> {
 
-    Set<String> getUserSubscribers(String username);
+    Iterable<Subscription> findSubscriptionsBySubscriber(String subscriber);
 
-    Set<String> getUserSubscriptions(String username);
+    Iterable<Subscription> findSubscriptionsByUsername(String username);
 
-    Integer getUserSubscribersCount(String username);
+    long countByUsername(String username);
 
-    Integer getUserSubscriptionCount(String username);
+    long countBySubscriber(String username);
 
-    boolean addSubscription(Subscription subscription);
+    boolean existsByUsername(String username);
 
-    boolean removeSubscription(Subscription subscription);
+    boolean existsBySubscriber(String username);
 
-    boolean isSubscriptionPresent(Subscription subscription);
+    boolean existsByUsernameAndAndSubscriber(String username, String subscriber);
 
-    boolean isUserPresentAsSubscription(String username);
-
-    boolean isUserPresentAsSubscriber(String username);
 }

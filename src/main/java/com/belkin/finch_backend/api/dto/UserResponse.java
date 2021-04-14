@@ -17,13 +17,13 @@ public class UserResponse {
     private String description;
     private String profilePhotoUrl;
     private User.ProfileAccess profileAccess;
-    private Integer subscriptionsCount;
-    private Integer subscribersCount;
+    private long subscriptionsCount;
+    private long subscribersCount;
     private AccessType type;
 
 
 
-    public UserResponse(User user, Integer subscriptionsCount, Integer subscribersCount, AccessType type) {
+    public UserResponse(User user, long subscriptionsCount, long subscribersCount, AccessType type) {
         this(user, type, false);
         this.subscribersCount = subscribersCount;
         this.subscriptionsCount = subscriptionsCount;

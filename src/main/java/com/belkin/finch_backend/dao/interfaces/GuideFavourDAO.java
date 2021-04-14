@@ -1,21 +1,19 @@
 package com.belkin.finch_backend.dao.interfaces;
 
-import com.belkin.finch_backend.model.Like;
-import com.belkin.finch_backend.util.Base62;
+import com.belkin.finch_backend.model.Favour;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("database_guide_like")
-public interface GuideLikeDAO extends CrudRepository<Like, Integer> {
+@Repository("database_guide_favour")
+public interface GuideFavourDAO extends CrudRepository<Favour, Integer> {
 
-    List<Like> findLikesByUsername(String liker);
+    List<Favour> findFavoursByUsername(String liker);
 
-    List<Like> findLikesByGuide(String guideId);
+    List<Favour> findFavoursByGuide(String guideId);
 
     long countByGuide(String guideId);
 
     boolean existsByUsernameAndGuide(String username, String guide);
 }
-

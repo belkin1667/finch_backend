@@ -8,11 +8,14 @@ import com.belkin.finch_backend.exception.alreadyexist.SelfSubscribeException;
 import com.belkin.finch_backend.exception.notfound.UserNotFoundException;
 import com.belkin.finch_backend.model.Subscription;
 import com.belkin.finch_backend.model.User;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.belkin.finch_backend.api.dto.AccessType.*;
 
@@ -22,51 +25,51 @@ public class UserService {
     private final UserDAO userDao;
     private final SubsDAO subsDao;
 
-    public UserService(@Qualifier("user_fake") UserDAO userDao,
-                       @Qualifier("subs_fake") SubsDAO subsDao) {
+    public UserService(@Qualifier("database_user") UserDAO userDao,
+                       @Qualifier("database_subs") SubsDAO subsDao) {
         this.userDao = userDao;
         this.subsDao = subsDao;
     }
 
-    public boolean addUser(User user) {
-        return userDao.createUser(user);
+    public User addUser(User user) {
+        return userDao.save(user);
     }
 
     public List<User> getAllUsers() {
-        return userDao.readAllUsers();
+        return Lists.newArrayList(userDao.findAll());
     }
 
     public User getUserByUsername(String username) {
-        return userDao.readUserByUsername(username)
+        return userDao.findById(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
 
-    public boolean deleteUser(String username) {
-        return userDao.deleteUserByUsername(username);
+    public void deleteUser(String username) {
+        userDao.deleteById(username);
     }
 
-    public boolean updateUser(String username, User user) {
-        return userDao.updateUserByUsername(username, user);
+    public User updateUser(String username, User user) {
+        userDao.deleteById(username);
+        return userDao.save(user);
+        //return userDao.save(username, user);
     }
 
     public AccessType getAccessType(String myUsername, String requestedUsername) {
-        User meUser = userDao.readUserByUsername(myUsername)
+        User meUser = userDao.findById(myUsername)
                 .orElseThrow(() -> new UserNotFoundException(myUsername));
         if (myUsername.equals(requestedUsername)) {
             return ME_FULL_ACCESS;
         }
         else {
-            User requestedUser = userDao.readUserByUsername(requestedUsername)
+            User requestedUser = userDao.findById(requestedUsername)
                     .orElseThrow(() -> new UserNotFoundException(requestedUsername));
 
             switch (requestedUser.getProfileAccess()) {
                 case ALL:
                     return NOT_ME_FULL_ACCESS;
                 case MUTUAL_FOLLOWERS:
-                    Subscription s1 = new Subscription(myUsername, requestedUsername);
-                    Subscription s2 = new Subscription( requestedUsername, myUsername);
-                    if (subsDao.isSubscriptionPresent(s1) &&
-                            subsDao.isSubscriptionPresent(s2)) {
+                    if (subsDao.existsByUsernameAndAndSubscriber(myUsername, requestedUsername) &&
+                            subsDao.existsByUsernameAndAndSubscriber(requestedUsername, myUsername)) {
                         return NOT_ME_FULL_ACCESS;
                     }
                     return NOT_ME_PARTIAL_ACCESS;
@@ -78,7 +81,7 @@ public class UserService {
     }
 
     public UserResponse getUserPreview(String myUsername, String requestedUsername) {
-        User requestedUser = userDao.readUserByUsername(requestedUsername)
+        User requestedUser = userDao.findById(requestedUsername)
                 .orElseThrow(() -> new UserNotFoundException(requestedUsername));
         AccessType accessType;
         if (myUsername.equals(requestedUsername)) {
@@ -89,44 +92,44 @@ public class UserService {
         }
 
         return new UserResponse(requestedUser,
-                subsDao.getUserSubscriptionCount(requestedUsername),
-                subsDao.getUserSubscribersCount(requestedUsername),
+                subsDao.countBySubscriber(requestedUsername),
+                subsDao.countByUsername(requestedUsername),
                 accessType);
     }
 
     public UserResponse getUser(String myUsername, String requestedUsername) {
-        User requestedUser = userDao.readUserByUsername(requestedUsername)
+        User requestedUser = userDao.findById(requestedUsername)
                 .orElseThrow(() -> new UserNotFoundException(requestedUsername));
         AccessType accessType = getAccessType(myUsername, requestedUsername);
         if (accessType != null)
             return new UserResponse(requestedUser,
-                    subsDao.getUserSubscriptionCount(requestedUsername),
-                    subsDao.getUserSubscribersCount(requestedUsername),
+                    subsDao.countBySubscriber(requestedUsername),
+                    subsDao.countByUsername(requestedUsername),
                     accessType);
         else
             return null;
     }
 
     public Set<String> getSubscribers(String myUsername) {
-        return subsDao.getUserSubscribers(myUsername);
+        return Lists.newArrayList(subsDao.findSubscriptionsByUsername(myUsername)).stream().map(Subscription::getSubscriber).collect(Collectors.toSet());
     }
 
     public Set<String> getSubscriptions(String myUsername) {
-        return subsDao.getUserSubscriptions(myUsername);
+        return Lists.newArrayList(subsDao.findSubscriptionsBySubscriber(myUsername)).stream().map(Subscription::getUsername).collect(Collectors.toSet());
     }
 
-    public boolean subscribe(String myUsername, String subscription) {
+    public Subscription subscribe(String myUsername, String subscription) {
         if (myUsername.equals(subscription))
             throw new SelfSubscribeException();
         Subscription s = new Subscription(subscription, myUsername);
-        return subsDao.addSubscription(s);
+        return subsDao.save(s);
     }
 
-    public boolean unsubscribe(String myUsername, String subscription) {
+    public void unsubscribe(String myUsername, String subscription) {
         if (myUsername.equals(subscription))
             throw new SelfSubscribeException();
         Subscription s = new Subscription(subscription, myUsername);
-        return subsDao.removeSubscription(s);
+        subsDao.delete(s);
     }
 
     public String getUserProfilePhotoUrlByUsername(String username) {

@@ -3,11 +3,13 @@ package com.belkin.finch_backend.service;
 import com.belkin.finch_backend.api.dto.*;
 import com.belkin.finch_backend.dao.interfaces.CardDAO;
 import com.belkin.finch_backend.dao.interfaces.GuideDAO;
+import com.belkin.finch_backend.dao.interfaces.GuideFavourDAO;
 import com.belkin.finch_backend.dao.interfaces.GuideLikeDAO;
 import com.belkin.finch_backend.exception.AccessDeniedException;
 import com.belkin.finch_backend.exception.notfound.CardNotFoundException;
 import com.belkin.finch_backend.exception.notfound.GuideNotFoundException;
 import com.belkin.finch_backend.model.Card;
+import com.belkin.finch_backend.model.Favour;
 import com.belkin.finch_backend.model.Guide;
 import com.belkin.finch_backend.model.Like;
 import com.belkin.finch_backend.util.Base62;
@@ -27,14 +29,14 @@ public class GuideService {
     private final GuideDAO guideDAO;
     private final CardDAO cardDAO;
     private final GuideLikeDAO guideLikesDAO;
-    private final GuideLikeDAO guideFavorDAO;
+    private final GuideFavourDAO guideFavorDAO;
     private final UserService userService;
 
     @Autowired
-    public GuideService(@Qualifier("guide_fake") GuideDAO guideDAO,
-                        @Qualifier("card_fake") CardDAO cardDAO,
-                        @Qualifier("guide_like_fake") GuideLikeDAO guideLikesDAO,
-                        @Qualifier("guide_favor_fake") GuideLikeDAO guideFavorDAO,
+    public GuideService(@Qualifier("database_guide") GuideDAO guideDAO,
+                        @Qualifier("database_card") CardDAO cardDAO,
+                        @Qualifier("database_guide_like") GuideLikeDAO guideLikesDAO,
+                        @Qualifier("database_guide_favour") GuideFavourDAO guideFavorDAO,
                         UserService userService) {
         this.guideDAO = guideDAO;
         this.cardDAO = cardDAO;
@@ -48,20 +50,19 @@ public class GuideService {
     public GuideResponse getGuideById(String myUsername, Base62 guideId) {
         log.info("Getting guide by id, where id = " + guideId.getId());
 
-        Guide guide = guideDAO.readGuideById(guideId).orElseThrow(() -> new GuideNotFoundException(guideId));
+        Guide guide = guideDAO.findById(guideId).orElseThrow(() -> new GuideNotFoundException(guideId));
 
         log.info("Guide " + new Gson().toJson(guide));
 
-        GuideResponse guideResponse = new GuideResponse(guide,
+        return new GuideResponse(guide,
                 guide.getAuthorUsername().equals(myUsername) ? AccessType.ME_FULL_ACCESS : AccessType.NOT_ME_FULL_ACCESS,
-                guideLikesDAO.isPresent(new Like(myUsername, guideId)),
-                guideLikesDAO.getLikesNumber(guideId),
-                guideFavorDAO.isPresent(new Like(myUsername, guideId)));
-        return guideResponse;
+                guideLikesDAO.existsByUsernameAndGuide(myUsername, guideId.getId()),
+                guideLikesDAO.countByGuide(guideId.getId()),
+                guideFavorDAO.existsByUsernameAndGuide(myUsername, guideId.getId()));
     }
 
     public List<GuideResponse> getGuidesPreviewByUsername(String myUsername, String requestedUsername) {
-        List<Guide> requestedGuides = guideDAO.readAllGuidesByAuthorUsername(requestedUsername);
+        List<Guide> requestedGuides = guideDAO.findGuidesByAuthorUsername(requestedUsername);
         AccessType accessType;
         if (myUsername.equals(requestedUsername)) {
             accessType = AccessType.ME_PARTIAL_ACCESS;
@@ -72,14 +73,14 @@ public class GuideService {
                 .map(g ->
                         new GuideResponse(g,
                                 accessType,
-                                guideLikesDAO.isPresent(new Like(myUsername, g.getId())),
-                                guideLikesDAO.getLikesNumber(g.getId()),
-                                guideFavorDAO.isPresent(new Like(myUsername, g.getId()))))
+                                guideLikesDAO.existsByUsernameAndGuide(myUsername, g.getId().getId()),
+                                guideLikesDAO.countByGuide(g.getId().getId()),
+                                guideFavorDAO.existsByUsernameAndGuide(myUsername, g.getId().getId())))
                 .collect(Collectors.toList());
     }
 
     public List<String> getGuideIdsByUsername(String requestedUsername) {
-        List<String> guides = guideDAO.readAllGuidesByAuthorUsername(requestedUsername).stream()
+        List<String> guides = guideDAO.findGuidesByAuthorUsername(requestedUsername).stream()
                 .map(Guide::getId)
                 .map(Base62::getId)
                 .collect(Collectors.toList());
@@ -87,23 +88,23 @@ public class GuideService {
     }
 
     public List<GuideResponse> getGuidesByUsername(String myUsername, String requestedUsername) {
-        List<Guide> requestedGuides = guideDAO.readAllGuidesByAuthorUsername(requestedUsername);
+        List<Guide> requestedGuides = guideDAO.findGuidesByAuthorUsername(requestedUsername);
         AccessType accessType = userService.getAccessType(myUsername, requestedUsername);
         if (accessType != null)
             return requestedGuides.stream()
                     .map(g ->
                             new GuideResponse(g,
                                     accessType,
-                                    guideLikesDAO.isPresent(new Like(myUsername, g.getId())),
-                                    guideLikesDAO.getLikesNumber(g.getId()),
-                                    guideFavorDAO.isPresent(new Like(myUsername, g.getId()))))
+                                    guideLikesDAO.existsByUsernameAndGuide(myUsername, g.getId().getId()),
+                                    guideLikesDAO.countByGuide(g.getId().getId()),
+                                    guideFavorDAO.existsByUsernameAndGuide(myUsername, g.getId().getId())))
                     .collect(Collectors.toList());
         else
             return null;
     }
 
     private Base62 getGuideIdByCardId(Base62 cardId) {
-        Card card = cardDAO.readCardById(cardId).orElseThrow(() -> new CardNotFoundException(cardId));
+        Card card = cardDAO.findById(cardId).orElseThrow(() -> new CardNotFoundException(cardId));
         return card.getGuideId();
     }
 
@@ -119,30 +120,31 @@ public class GuideService {
         do {
             id = Base62.randomBase62();
             log.info("Trying identifier " + id.getId());
-        } while (guideDAO.isPresent(id));
+        } while (guideDAO.existsById(id));
         log.info("Unique guide identifier generated: " + id.getId());
 
         guide.setId(id);
         guide.setAuthorUsername(myUsername);
-        return guideDAO.createGuide(guide);
+        return guideDAO.save(guide).getId();
     }
 
-    public boolean editGuide(String myUsername, Guide newGuide) {
+    public void editGuide(String myUsername, Guide newGuide) {
         if (!isUserGuideAuthor(myUsername, newGuide.getId()))
             throw new AccessDeniedException(myUsername);
-        Guide oldGuide = guideDAO.readGuideById(newGuide.getId()).orElseThrow(() -> new GuideNotFoundException(newGuide.getId()));
+        Guide oldGuide = guideDAO.findById(newGuide.getId()).orElseThrow(() -> new GuideNotFoundException(newGuide.getId()));
         oldGuide.edit(newGuide);
-        return guideDAO.updateGuideById(newGuide.getId(), oldGuide);
+        guideDAO.save(oldGuide);
     }
 
-    public boolean deleteGuide(String myUsername, Base62 guideId) {
+    public void deleteGuide(String myUsername, Base62 guideId) {
         if (!isUserGuideAuthor(myUsername, guideId))
             throw new AccessDeniedException(myUsername);
-        return guideDAO.deleteGuideById(guideId) && deleteCardsByGuideId(guideId);
+        guideDAO.deleteById(guideId);
+        deleteCardsByGuideId(guideId);
     }
 
     public boolean isUserGuideAuthor(String username, Base62 id) {
-        Guide guide = guideDAO.readGuideById(id).orElseThrow(() -> new GuideNotFoundException(id));
+        Guide guide = guideDAO.findById(id).orElseThrow(() -> new GuideNotFoundException(id));
         boolean res = guide.getAuthorUsername().equals(username);
         return res;
     }
@@ -153,17 +155,17 @@ public class GuideService {
     public CardResponse getCardById(String myUsername, Base62 id) {
         Base62 guideId = getGuideIdByCardId(id);
         AccessType accessType = getGuideById(myUsername, guideId).getType();
-        Card card = cardDAO.readCardById(id).orElseThrow(() -> new CardNotFoundException(id));
+        Card card = cardDAO.findById(id).orElseThrow(() -> new CardNotFoundException(id));
         return new CardResponse(card, accessType);
     }
 
     public List<Base62> getCardsIdsByGuideId(Base62 guideId) {
-        return cardDAO.readCardsIdsByGuideId(guideId);
+        return cardDAO.findCardsByGuideId(guideId).stream().map(Card::getId).collect(Collectors.toList());
     }
 
     public List<CardResponse> getCardsByGuideId(Base62 guideId, String myUsername) {
         AccessType accessType = getGuideById(myUsername, guideId).getType();
-        return cardDAO.readCardsByGuideId(guideId).stream()
+        return cardDAO.findCardsByGuideId(guideId).stream()
                 .map(c -> new CardResponse(c, accessType))
                 .collect(Collectors.toList());
     }
@@ -177,37 +179,32 @@ public class GuideService {
         do {
             id = Base62.randomBase62();
             log.info("Trying identifier " + id.getId());
-        } while (cardDAO.isPresent(id));
+        } while (cardDAO.existsById(id));
         log.info("Unique card identifier generated: " + id.getId());
 
         Card card = new Card(id, cardRequest.getGuideId(), cardRequest.getThumbnailUrl(),
                 cardRequest.getTitle(), cardRequest.getLocation(), cardRequest.getContent());
-        return cardDAO.createCard(card);
+        return cardDAO.save(card).getId();
     }
 
-    public boolean editCard(String myUsername, Card newCard) {
+    public void editCard(String myUsername, Card newCard) {
         if (!isUserCardAuthor(myUsername, newCard.getId()))
             throw new AccessDeniedException(myUsername);
-        Card oldGuide = cardDAO.readCardById(newCard.getId()).orElseThrow(() -> new CardNotFoundException(newCard.getId()));
+        Card oldGuide = cardDAO.findById(newCard.getId()).orElseThrow(() -> new CardNotFoundException(newCard.getId()));
         oldGuide.edit(newCard);
-        return cardDAO.updateCardById(newCard.getId(), oldGuide);
+        cardDAO.save(oldGuide);
     }
 
-    public boolean deleteCardById(Base62 id, String myUsername) {
+    public void deleteCardById(Base62 id, String myUsername) {
         if (!isUserCardAuthor(myUsername, id))
             throw new AccessDeniedException(myUsername);
-        return cardDAO.deleteCardById(id);
+        cardDAO.deleteById(id);
     }
 
-    private boolean deleteCardsByGuideId(Base62 guideId) {
+    private void deleteCardsByGuideId(Base62 guideId) {
         List<Base62> ids = getCardsIdsByGuideId(guideId);
-        if (ids.size() == 0)
-            return true;
-
-        return ids.stream()
-                .map(cardDAO::deleteCardById)
-                .reduce(true, Boolean::logicalAnd);
-
+        if (ids.size() != 0)
+            ids.stream().map(id -> { cardDAO.deleteById(id); return true; });
     }
 
     public boolean isUserCardAuthor(String username, Base62 cardId) {
@@ -241,42 +238,43 @@ public class GuideService {
 
     /* ========================= Likes API ========================= */
 
-    public boolean likeGuide(String myUsername, Base62 id) {
-        return guideLikesDAO.addLike(new Like(myUsername, id));
+    public Like likeGuide(String myUsername, Base62 id) {
+        return guideLikesDAO.save(new Like(myUsername, id));
     }
 
-    public boolean unlikeGuide(String myUsername, Base62 id) {
-        return guideLikesDAO.removeLike(new Like(myUsername, id));
+    public void unlikeGuide(String myUsername, Base62 id) {
+        guideLikesDAO.delete(new Like(myUsername, id));
     }
 
     public boolean hasLike(String myUsername, Base62 id) {
-        return guideLikesDAO.isPresent(new Like(myUsername, id));
+        return guideLikesDAO.existsByUsernameAndGuide(myUsername, id.getId());
 
     }
 
     /* ========================= Favourites API ========================= */
 
-    public boolean favorGuide(String myUsername, Base62 id) {
-        return guideFavorDAO.addLike(new Like(myUsername, id));
+    public Favour favourGuide(String myUsername, Base62 id) {
+        return guideFavorDAO.save(new Favour(myUsername, id));
     }
 
-    public boolean unfavorGuide(String myUsername, Base62 id) {
-        return guideFavorDAO.removeLike(new Like(myUsername, id));
+    public void unfavourGuide(String myUsername, Base62 id) {
+        guideFavorDAO.delete(new Favour(myUsername, id));
     }
 
-    public boolean hasFavor(String myUsername, Base62 id) {
-        return guideFavorDAO.isPresent(new Like(myUsername, id));
+    public boolean hasFavour(String myUsername, Base62 id) {
+        return guideFavorDAO.existsByUsernameAndGuide(myUsername, id.getId());
     }
 
     public List<FeedGuideResponse> getUserFavourites(String myUsername) {
-        return guideFavorDAO.getLiked(myUsername).stream()
+        return guideFavorDAO.findFavoursByUsername(myUsername).stream()
+                .map(Favour::getGuideId)
                 .map(this::idToFeedGuideResponseMapper)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     private FeedGuideResponse idToFeedGuideResponseMapper(Base62 id) {
-        Optional<Guide> maybeGuide = guideDAO.readGuideById(id);
+        Optional<Guide> maybeGuide = guideDAO.findById(id);
         if(maybeGuide.isPresent()) {
             String username = maybeGuide.get().getAuthorUsername();
             String profilePhoto = userService.getUserProfilePhotoUrlByUsername(username);

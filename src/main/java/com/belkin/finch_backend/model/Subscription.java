@@ -2,13 +2,30 @@ package com.belkin.finch_backend.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
-@AllArgsConstructor
-public class Subscription {
+import javax.persistence.*;
+import java.io.Serializable;
 
+@Getter @Setter
+@Entity
+@AllArgsConstructor @NoArgsConstructor
+public class Subscription implements Serializable  {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    public Subscription(String username, String subscriber) {
+        this.username = username;
+        this.subscriber = subscriber;
+    }
+
+    @Column(columnDefinition = "VARCHAR")
     private String username;
+
+    @Column(columnDefinition = "VARCHAR")
     private String subscriber;
 
 

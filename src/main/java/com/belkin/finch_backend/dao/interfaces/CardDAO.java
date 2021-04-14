@@ -2,25 +2,14 @@ package com.belkin.finch_backend.dao.interfaces;
 
 import com.belkin.finch_backend.model.Card;
 import com.belkin.finch_backend.util.Base62;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface CardDAO {
+@Repository("database_card")
+public interface CardDAO extends CrudRepository<Card, Base62> {
 
-    List<Card> readAllCards();
+    List<Card> findCardsByGuideId(Base62 guideId);
 
-    List<Card> readCardsByGuideId(Base62 guideId);
-
-    Optional<Card> readCardById(Base62 id);
-
-    Base62 createCard(Card card);
-
-    boolean updateCardById(Base62 id, Card card);
-
-    boolean deleteCardById(Base62 id);
-
-    List<Base62> readCardsIdsByGuideId(Base62 guideId);
-
-    boolean isPresent(Base62 id);
 }

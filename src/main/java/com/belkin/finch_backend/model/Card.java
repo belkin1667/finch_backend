@@ -5,21 +5,37 @@ import com.google.gson.Gson;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import java.util.List;
 
 @Slf4j
 @Getter @Setter
+@Entity
+@NoArgsConstructor
 public class Card {
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     public static final String DEFAULT_THUMBNAIL_URL = "2l0yHF5D6rW";
 
+    @EmbeddedId
     Base62 id;
+
+    @Column(name = "guide_id")
     Base62 guideId;
+
+    @Column(name = "thumbnail_id")
     String thumbnailUrl;
+
+    @Column(columnDefinition = "VARCHAR")
     String title;
+
+    @Column(columnDefinition = "VARCHAR")
     String location;
+
+    @ElementCollection
     List<Content> content;
 
     public Card(Base62 id, Base62 guideId, String thumbnailUrl, String title, String location, List<Content> content) {

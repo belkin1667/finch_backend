@@ -1,19 +1,14 @@
 package com.belkin.finch_backend.security.dao;
 
 import com.belkin.finch_backend.security.model.ApplicationUser;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ApplicationUserDAO {
+@Repository("database_appuser")
+public interface ApplicationUserDAO extends CrudRepository<ApplicationUser, String> {
 
-    boolean insertUser(ApplicationUser user);
-
-    List<ApplicationUser> selectAllUsers();
-
-    Optional<ApplicationUser> selectUserByUsername(String username);
-
-    boolean deleteUserByUsername(String username);
-
-    boolean updateUserByUsername(String username, ApplicationUser user);
 }
+

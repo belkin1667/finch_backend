@@ -24,10 +24,10 @@ public class GuideResponse {
     private AccessType type;
     private List<String> tags;
     private Boolean liked = null;
-    private Integer likesnum = -1;
+    private Long likesnum = -1L;
     private Boolean favourite = null;
 
-    public GuideResponse(Guide guide, AccessType type, Boolean liked, int likesnum, Boolean favourite) {
+    public GuideResponse(Guide guide, AccessType type, Boolean liked, long likesnum, Boolean favourite) {
         this(guide, type);
         this.liked = liked;
         this.likesnum = likesnum;

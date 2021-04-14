@@ -11,58 +11,80 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Repository("user_fake")
+@Repository("fake_user")
 public class FakeUserDataAccessService implements UserDAO {
 
     ArrayList<User> database = new ArrayList<>();
 
     @Override
-    public boolean createUser(User user) {
+    public User save(User user) {
         log.info("Creating user " + new Gson().toJson(user) + " in database...");
 
-        if(readUserByUsername(user.getUsername()).isPresent())
-            return false;
+        if(findById(user.getUsername()).isPresent()) {
+            deleteById(user.getUsername());
+        }
 
-        return database.add(user);
+        database.add(user);
+        return user;
     }
 
     @Override
-    public List<User> readAllUsers() {
+    public List<User> findAll() {
         log.info("Reading all users from database...");
 
         return database;
     }
 
     @Override
-    public Optional<User> readUserByUsername(String username) {
+    public Iterable<User> findAllById(Iterable<String> strings) {
+        return null;
+    }
+
+    @Override
+    public long count() {
+        return 0;
+    }
+
+    @Override
+    public <S extends User> Iterable<S> saveAll(Iterable<S> entities) {
+        return null;
+    }
+
+    @Override
+    public Optional<User> findById(String username) {
         log.info("Reading user by username, where username = " + username + " from database...");
 
         return database.stream().filter(u -> u.getUsername().equals(username)).findAny();
     }
 
     @Override
-    public boolean updateUserByUsername(String username, User updatedUser) {
-        log.info("Updating user by username, where username = " + username + " with new data: " + new Gson().toJson(updatedUser) + " from database...");
-
-        return readUserByUsername(username).map(oldUser -> {
-            int index = database.indexOf(oldUser);
-            if (index >= 0) {
-                database.set(index, updatedUser);
-                return true;
-            }
-            return false;
-        }).orElse(false);
+    public boolean existsById(String s) {
+        return false;
     }
 
     @Override
-    public boolean deleteUserByUsername(String username) {
+    public void deleteById(String username) {
         log.info("Deleting user by username, where username = " + username + " from database...");
 
-        Optional<User> maybeUser = readUserByUsername(username);
+        Optional<User> maybeUser = findById(username);
         if (maybeUser.isEmpty())
-            return false;
+            return;
         database.remove(maybeUser.get());
-        return true;
+    }
+
+    @Override
+    public void delete(User entity) {
+
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends User> entities) {
+
+    }
+
+    @Override
+    public void deleteAll() {
+
     }
 
 }

@@ -57,29 +57,20 @@ public class CardController {
     }
 
     @PutMapping
-    public String editCard(@RequestBody CardRequest cardRequest, @RequestHeader("Authorization") String authorizationHeader) {
+    public void editCard(@RequestBody CardRequest cardRequest, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("PUT /card with header Authorization = '" + authorizationHeader + "'");
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
         Card card = new Card(cardRequest.getId(), cardRequest.getGuideId(),
                 cardRequest.getThumbnailUrl(), cardRequest.getTitle(),
                 cardRequest.getLocation(), cardRequest.getContent());
-        boolean result = guideService.editCard(myUsername, card);
-
-        if (result)
-            return "Success";
-        else
-            throw new RuntimeException();
+        guideService.editCard(myUsername, card);
     }
 
     @DeleteMapping(path = "/{id}")
-    public String deleteCard(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+    public void deleteCard(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("DELETE /card/{id}, where id='" + id.getId() + "' with header Authorization = '" + authorizationHeader + "'");
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        boolean result = guideService.deleteCardById(id, myUsername);
-        if (result)
-            return "Success";
-        else
-            throw new RuntimeException();
+        guideService.deleteCardById(id, myUsername);
     }
 }
