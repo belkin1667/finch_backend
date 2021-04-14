@@ -10,6 +10,9 @@ sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
+    maven {
+        url "http://repo.spring.io/milestone"
+    }
 }
 
 dependencies {
@@ -52,6 +55,8 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter-sql-postgresql', version: '1.2.7.RELEASE'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-dependencies', version: '1.2.7.RELEASE', ext: 'pom'
 }
 
 test {
