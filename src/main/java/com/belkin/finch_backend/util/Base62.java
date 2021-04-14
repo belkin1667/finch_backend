@@ -2,10 +2,16 @@ package com.belkin.finch_backend.util;
 
 import com.belkin.finch_backend.exception.invalid.InvalidBase62Exception;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.Random;
 
-public class Base62 {
+@Embeddable
+@NoArgsConstructor
+public class Base62 implements Serializable {
 
     private static final int STRING_LENGTH = 11;
     private static final char[] ALPHABET = getAlphabet();
@@ -42,6 +48,7 @@ public class Base62 {
     }
 
     @Getter
+    @Column(insertable = false, updatable = false)
     private String id;
 
     public void setId(String str) {

@@ -2,24 +2,14 @@ package com.belkin.finch_backend.dao.interfaces;
 
 import com.belkin.finch_backend.util.Base62;
 import com.belkin.finch_backend.model.Guide;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface GuideDAO {
+@Repository("database_guide")
+public interface GuideDAO extends CrudRepository<Guide, Base62> {
 
-    Base62 createGuide(Guide guide);
-
-    List<Guide> readAllGuides();
-
-    List<Guide> readAllGuidesByAuthorUsername(String authorUsername);
-
-    Optional<Guide> readGuideById(Base62 id);
-
-    boolean updateGuideById(Base62 id, Guide newGuide);
-
-    boolean deleteGuideById(Base62 id);
-
-    boolean isPresent(Base62 id);
+    List<Guide> findGuidesByAuthorUsername(String authorUsername);
 
 }

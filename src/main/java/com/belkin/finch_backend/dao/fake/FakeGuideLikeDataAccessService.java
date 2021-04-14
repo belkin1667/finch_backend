@@ -7,54 +7,93 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-@Repository("guide_like_fake")
+@Repository("fake_guide_like")
 public class FakeGuideLikeDataAccessService implements GuideLikeDAO {
 
     List<Like> database = new ArrayList<>();
 
     @Override
-    public boolean addLike(Like like) {
-        if (isPresent(like))
-            return true;
-        else
-            return database.add(like);
+    public Like save(Like like) {
+        database.add(like);
+        return like;
     }
 
     @Override
-    public boolean removeLike(Like like) {
-        if(!isPresent(like))
-            return true;
-        else
-            return database.remove(like);
+    public void delete(Like like) {
+        database.remove(like);
     }
 
     @Override
-    public List<String> getLikers(Base62 id) {
+    public void deleteAll(Iterable<? extends Like> entities) {
+
+    }
+
+    @Override
+    public void deleteAll() {
+
+    }
+
+    @Override
+    public List<Like> findLikesByGuide(String guideId) {
         return database.stream()
-                .filter(l -> l.getGuideId().equals(id))
-                .map(Like::getUsername)
+                .filter(l -> l.getGuideId().equals(guideId))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Base62> getLiked(String liker) {
+    public List<Like> findLikesByUsername(String liker) {
         return database.stream()
                 .filter(l -> l.getUsername().equals(liker))
-                .map(Like::getGuideId)
                 .collect(Collectors.toList());
     }
 
-
     @Override
-    public int getLikesNumber(Base62 id) {
-        return getLikers(id).size();
+    public long countByGuide(String guideId) {
+        return findLikesByGuide(guideId).size();
     }
 
     @Override
-    public boolean isPresent(Like like) {
-        return database.contains(like);
+    public boolean existsByUsernameAndGuide(String username, String guide) {
+        return false;
     }
+
+    @Override
+    public <S extends Like> Iterable<S> saveAll(Iterable<S> entities) {
+        return null;
+    }
+
+    @Override
+    public Optional<Like> findById(Integer integer) {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean existsById(Integer like) {
+        return true;
+    }
+
+    @Override
+    public Iterable<Like> findAll() {
+        return null;
+    }
+
+    @Override
+    public Iterable<Like> findAllById(Iterable<Integer> integers) {
+        return null;
+    }
+
+    @Override
+    public long count() {
+        return 0;
+    }
+
+    @Override
+    public void deleteById(Integer integer) {
+
+    }
+
 }

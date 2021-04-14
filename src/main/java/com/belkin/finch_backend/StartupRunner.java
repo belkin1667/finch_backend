@@ -2,6 +2,7 @@ package com.belkin.finch_backend;
 
 import com.belkin.finch_backend.dao.interfaces.*;
 import com.belkin.finch_backend.model.*;
+import com.belkin.finch_backend.security.ApplicationUserRole;
 import com.belkin.finch_backend.security.dao.ApplicationUserDAO;
 import com.belkin.finch_backend.security.model.ApplicationUser;
 import com.belkin.finch_backend.util.Base62;
@@ -18,9 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.belkin.finch_backend.security.ApplicationUserRole.USER;
 
@@ -29,14 +28,14 @@ import static com.belkin.finch_backend.security.ApplicationUserRole.USER;
 public class StartupRunner implements ApplicationRunner {
 
     @Autowired
-    public StartupRunner(UserDAO userDAO,
-                         GuideDAO guideDAO,
-                         CardDAO cardDAO,
-                         ImageMetadataDAO imageDAO,
-                         SubsDAO subsDAO,
-                         @Qualifier("guide_favor_fake") GuideLikeDAO guideFavorDAO,
-                         @Qualifier("guide_like_fake") GuideLikeDAO guideLikeDAO,
-                         ApplicationUserDAO applicationUserDAO,
+    public StartupRunner(@Qualifier("database_user") UserDAO userDAO,
+                         @Qualifier("database_guide") GuideDAO guideDAO,
+                         @Qualifier("database_card") CardDAO cardDAO,
+                         @Qualifier("database_image") ImageMetadataDAO imageDAO,
+                         @Qualifier("database_subs") SubsDAO subsDAO,
+                         @Qualifier("database_guide_favour") GuideFavourDAO guideFavorDAO,
+                         @Qualifier("database_guide_like") GuideLikeDAO guideLikeDAO,
+                         @Qualifier("database_appuser") ApplicationUserDAO applicationUserDAO,
                          PasswordEncoder passwordEncoder) {
         this.userDAO = userDAO;
         this.guideDAO = guideDAO;
@@ -53,7 +52,7 @@ public class StartupRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         //createImageDirectory();
         //emptyImageDirectory();
-        generateMockData();
+        //generateMockData();
     }
 
     private final UserDAO userDAO;
@@ -62,7 +61,7 @@ public class StartupRunner implements ApplicationRunner {
     private final ImageMetadataDAO imageDAO;
     private final SubsDAO subsDAO;
     private final GuideLikeDAO guideLikeDAO;
-    private final GuideLikeDAO guideFavorDAO;
+    private final GuideFavourDAO guideFavorDAO;
     private final ApplicationUserDAO applicationUserDAO;
     private final PasswordEncoder passwordEncoder;
 
@@ -73,6 +72,10 @@ public class StartupRunner implements ApplicationRunner {
         List<ImageMetadata> images = new ArrayList<>();
         List<Card> cards = new ArrayList<>();
         List<Subscription> subs = new ArrayList<>();
+
+
+        Set<ApplicationUserRole> userRoleSet = new HashSet<>();
+        userRoleSet.add(USER);
 
 
         List<Content> content = new ArrayList<>();
@@ -90,7 +93,7 @@ public class StartupRunner implements ApplicationRunner {
                 "J2o89z1DFMj",
                 User.ProfileAccess.ALL));
         appusers.add(new ApplicationUser("mike", "mike@finch.com", passwordEncoder.encode("password"),
-                USER.getGrantedAuthorities(), true, true, true, true));
+                userRoleSet, true, true, true, true));
 
         users.add(new User("johndoe",
                 "john@finch.com",
@@ -100,7 +103,7 @@ public class StartupRunner implements ApplicationRunner {
                 "2l0yHF5D6rW",
                 User.ProfileAccess.ALL));
         appusers.add(new ApplicationUser("johndoe", "john@finch.com", passwordEncoder.encode("password"),
-                USER.getGrantedAuthorities(), true, true, true, true));
+                userRoleSet, true, true, true, true));
 
         users.add(new User("donald",
                 "don@finch.com",
@@ -110,7 +113,7 @@ public class StartupRunner implements ApplicationRunner {
                 "tm7ghZDWKoB",
                 User.ProfileAccess.ALL));
         appusers.add(new ApplicationUser("donald", "don@finch.com", passwordEncoder.encode("password"),
-                USER.getGrantedAuthorities(), true, true, true, true));
+                userRoleSet, true, true, true, true));
 
         users.add(new User("elon",
                 "elon@finch.com",
@@ -120,7 +123,7 @@ public class StartupRunner implements ApplicationRunner {
                 "4SEa9DjdiXW",
                 User.ProfileAccess.ALL));
         appusers.add(new ApplicationUser("elon", "elon@finch.com", passwordEncoder.encode("password"),
-                USER.getGrantedAuthorities(), true, true, true, true));
+                userRoleSet, true, true, true, true));
 
         subs.add(new Subscription("mike", "elon"));
         subs.add(new Subscription("mike", "johndoe"));
@@ -268,34 +271,34 @@ public class StartupRunner implements ApplicationRunner {
         likes.add(new Like("johndoe", new Base62("XgKGSVikuD2")));
         likes.add(new Like("donald", new Base62("XgKGSVikuD2")));
 
-        List<Like> favourites = new ArrayList<>();
-        favourites.add(new Like("elon", new Base62("int7gu7yFtA")));
-        favourites.add(new Like("elon", new Base62("XgKGSVikuD2")));
-        favourites.add(new Like("elon", new Base62("ACcvoVo0M58")));
+        List<Favour> favourites = new ArrayList<>();
+        favourites.add(new Favour("elon", new Base62("int7gu7yFtA")));
+        favourites.add(new Favour("elon", new Base62("XgKGSVikuD2")));
+        favourites.add(new Favour("elon", new Base62("ACcvoVo0M58")));
 
         for (User user : users) {
-            userDAO.createUser(user);
+            userDAO.save(user);
         }
         for (ApplicationUser user : appusers) {
-            applicationUserDAO.insertUser(user);
+            applicationUserDAO.save(user);
         }
         for (ImageMetadata image : images) {
-            imageDAO.addImage(image);
+            imageDAO.save(image);
         }
         for (Guide guide : guides) {
-            guideDAO.createGuide(guide);
+            guideDAO.save(guide);
         }
         for (Card card : cards) {
-            cardDAO.createCard(card);
+            cardDAO.save(card);
         }
         for (Subscription sub : subs) {
-            subsDAO.addSubscription(sub);
+            subsDAO.save(sub);
         }
         for (Like like : likes) {
-            guideLikeDAO.addLike(like);
+            guideLikeDAO.save(like);
         }
-        for (Like favor : favourites) {
-            guideFavorDAO.addLike(favor);
+        for (Favour favor : favourites) {
+            guideFavorDAO.save(favor);
         }
     }
 

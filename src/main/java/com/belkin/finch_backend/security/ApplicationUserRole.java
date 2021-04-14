@@ -1,9 +1,13 @@
 package com.belkin.finch_backend.security;
 
 import com.google.common.collect.Sets;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,19 +19,20 @@ public enum ApplicationUserRole {
     MODERATOR(Sets.newHashSet(MODERATORS_PROMOTE)),
     ADMIN(Sets.newHashSet(MODERATORS_PROMOTE, ADMINS_PROMOTE));
 
-    private final Set<ApplicationUserPermission> permissions;
+    @Getter
+    private Set<ApplicationUserPermission> permissions;
 
     ApplicationUserRole(Set<ApplicationUserPermission> permissions) { this.permissions = permissions; }
 
-    public Set<ApplicationUserPermission> getPermissions() {
+    /* public Set<ApplicationUserPermission> getPermissions() {
         return permissions;
-    }
+    }*/
 
-    public Set<? extends GrantedAuthority> getGrantedAuthorities() {
+    /*public Set<? extends GrantedAuthority> getGrantedAuthorities() {
         Set<SimpleGrantedAuthority> grantedAuthorities = getPermissions().stream()
                 .map(p -> new SimpleGrantedAuthority(p.getPermission()))
                 .collect(Collectors.toSet());
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
         return grantedAuthorities;
-    }
+    }*/
 }

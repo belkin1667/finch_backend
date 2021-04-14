@@ -87,7 +87,7 @@ public class GuideController {
             "(Preferred) 1. Provide only updated fields of the entity, which means you shall omit fields (or provide null value) which aren't supposed to be updated\n\r" +
             "2. Provide all fields of the entity: provide old values for non-updated fields and new values for updated fields")
     @PutMapping
-    public String editGuide(@RequestBody GuideRequest guideRequest, @RequestHeader("Authorization") String authorizationHeader) {
+    public void editGuide(@RequestBody GuideRequest guideRequest, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("PUT /guides/ with header Authorization = '" + authorizationHeader + "' and Body: " + gson.toJson(guideRequest));
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
@@ -95,22 +95,16 @@ public class GuideController {
         Guide guide = new Guide(myUsername, guideRequest.getId(), guideRequest.getTitle(),
                 guideRequest.getDescription(), guideRequest.getLocation(), dateNow, guideRequest.getTravelDate(),
                 guideRequest.getThumbnailUrl(), guideRequest.getTags());
-        boolean result = guideService.editGuide(myUsername, guide);
-
-        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
-        return res.orElseThrow(() -> new RuntimeException("Guide update failed"));
+        guideService.editGuide(myUsername, guide);
     }
 
     @ApiOperation(value = "Edit guide of authorized user", notes = "200 OK if success, 500 Internal Server Error if fail")
     @DeleteMapping(path = "/{id}")
-    public String deleteGuide(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+    public void deleteGuide(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("DELETE /guides/{id}, where id='" + id.getId() + "' with header Authorization = '" + authorizationHeader + "'");
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        boolean result = guideService.deleteGuide(myUsername, id);
-
-        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
-        return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
+        guideService.deleteGuide(myUsername, id);
     }
 
 
@@ -126,24 +120,17 @@ public class GuideController {
     }
 
     @PostMapping("/likes/{id}")
-    public String like(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+    public void like(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        boolean result = guideService.likeGuide(myUsername, id);
-
-        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
-        return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
+        guideService.likeGuide(myUsername, id);
     }
 
 
     @DeleteMapping("/likes/{id}")
-    public String unlike(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
-
+    public void unlike(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        boolean result = guideService.unlikeGuide(myUsername, id);
-
-        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
-        return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
+        guideService.unlikeGuide(myUsername, id);
     }
 
 
@@ -159,25 +146,19 @@ public class GuideController {
     @GetMapping("/favourites/{id}")
     public boolean hasFavor(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        return guideService.hasFavor(myUsername, id);
+        return guideService.hasFavour(myUsername, id);
     }
 
     @PostMapping("/favourites/{id}")
-    public String favor(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+    public void favour(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        boolean result = guideService.favorGuide(myUsername, id);
-
-        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
-        return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
+        guideService.favourGuide(myUsername, id);
     }
 
     @DeleteMapping("/favourites/{id}")
-    public String unfavor(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
+    public void unfavour(@PathVariable("id") Base62 id, @RequestHeader("Authorization") String authorizationHeader) {
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        boolean result = guideService.unfavorGuide(myUsername, id);
-
-        Optional<String> res = Optional.ofNullable(result ? "Success" : null);
-        return res.orElseThrow(() -> new RuntimeException("Guide delete failed"));
+        guideService.unfavourGuide(myUsername, id);
     }
 
 }

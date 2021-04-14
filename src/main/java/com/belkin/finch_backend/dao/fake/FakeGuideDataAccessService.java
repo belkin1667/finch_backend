@@ -13,30 +13,23 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Repository("guide_fake")
+@Repository("fake_guide")
 public class FakeGuideDataAccessService implements GuideDAO {
 
     ArrayList<Guide> database = new ArrayList<>();
     ArrayList<Base62> identifiers = new ArrayList<>();
 
     @Override
-    public Base62 createGuide(Guide guide) {
+    public Guide save(Guide guide) {
         log.info("Creating Guide " + new Gson().toJson(guide) + " in database...");
 
         identifiers.add(guide.getId());
         database.add(guide);
-        return guide.getId();
+        return guide;
     }
 
     @Override
-    public List<Guide> readAllGuides() {
-        log.info("Reading all guides from database...");
-
-        return database;
-    }
-
-    @Override
-    public List<Guide> readAllGuidesByAuthorUsername(String authorUsername) {
+    public List<Guide> findGuidesByAuthorUsername(String authorUsername) {
         log.info("Reading guides of author with username = " + authorUsername + " from database...");
 
         return database.stream()
@@ -45,7 +38,12 @@ public class FakeGuideDataAccessService implements GuideDAO {
     }
 
     @Override
-    public Optional<Guide> readGuideById(Base62 id) {
+    public <S extends Guide> Iterable<S> saveAll(Iterable<S> entities) {
+        return null;
+    }
+
+    @Override
+    public Optional<Guide> findById(Base62 id) {
         log.info("Reading guide by id, where id = " + id.getId());
 
         return database.stream()
@@ -54,29 +52,47 @@ public class FakeGuideDataAccessService implements GuideDAO {
     }
 
     @Override
-    public boolean updateGuideById(Base62 id, Guide newGuide) {
-        log.info("Updating guide by id, where id = " + id.getId() + " with new data: " + new Gson().toJson(newGuide) + " from database...");
-
-        Guide guide = readGuideById(id).orElse(null);
-        int index = database.indexOf(guide);
-        if (index >= 0) {
-            newGuide.setId(id);
-            database.set(index, newGuide);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean deleteGuideById(Base62 id) {
+    public void deleteById(Base62 id) {
         log.info("Deleting guide by id, where id = " + id.getId() + " from database...");
 
-        Guide guide = readGuideById(id).orElse(null);
-        return database.remove(guide);
+        Guide guide = findById(id).orElse(null);
+        if (guide == null)
+            return;
+        database.remove(guide);
     }
 
     @Override
-    public boolean isPresent(Base62 id) {
+    public void delete(Guide entity) {
+
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends Guide> entities) {
+
+    }
+
+    @Override
+    public void deleteAll() {
+
+    }
+
+    @Override
+    public boolean existsById(Base62 id) {
         return identifiers.stream().anyMatch(id::equals);
+    }
+
+    @Override
+    public Iterable<Guide> findAll() {
+        return null;
+    }
+
+    @Override
+    public Iterable<Guide> findAllById(Iterable<Base62> base62s) {
+        return null;
+    }
+
+    @Override
+    public long count() {
+        return 0;
     }
 }

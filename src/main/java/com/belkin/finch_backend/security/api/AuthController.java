@@ -31,15 +31,11 @@ public class AuthController {
     @ApiOperation(value="Register new user", notes = "If registration is successful returns 200 OK, else returns 403 Forbidden. " +
                                                      "Does not return JWT token. To get JWT token you shall do 'POST /login' right after you registered")
     @PostMapping("/register")
-    public String register(@ApiParam(value = "User credentials. Username will be checked for uniqueness. If it is not unique 403 Forbidden will be returned")
+    public void register(@ApiParam(value = "User credentials. Username will be checked for uniqueness. If it is not unique 403 Forbidden will be returned")
                                    @RequestBody RegistrationRequest registrationRequest) {
         log.info("POST /auth/register with Body: " + gson.toJson(registrationRequest));
 
-        boolean result = applicationUserService.registerUser(registrationRequest);
-        if (result)
-            return "Success";
-        else
-            throw new RuntimeException();
+        applicationUserService.registerUser(registrationRequest);
     }
 
 

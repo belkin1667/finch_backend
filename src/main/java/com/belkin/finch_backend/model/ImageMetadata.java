@@ -2,17 +2,18 @@ package com.belkin.finch_backend.model;
 
 import com.belkin.finch_backend.util.Base62;
 import com.google.gson.Gson;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import java.io.File;
 
 @Slf4j
 @Getter @Setter
-@AllArgsConstructor
+@Entity
+@AllArgsConstructor @NoArgsConstructor
 public class ImageMetadata {
 
     @Getter(AccessLevel.NONE)
@@ -23,9 +24,16 @@ public class ImageMetadata {
     @Setter(AccessLevel.NONE)
     public static final String BASE_PATH = "." + File.separator + "images";
 
+    @EmbeddedId
     Base62 id;
+
+    @Column(columnDefinition = "VARCHAR")
     String path;
+
+    @Column(columnDefinition = "VARCHAR")
     String extension = ".jpg";
+
+    @Column(name = "uploader", columnDefinition = "VARCHAR")
     String uploaderUsername;
 
     public ImageMetadata(String uploaderUsername, Base62 id, String extension) {

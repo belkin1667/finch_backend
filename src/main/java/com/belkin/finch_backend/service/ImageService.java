@@ -28,7 +28,7 @@ public class ImageService {
     private final ImageMetadataDAO imageMetadataDAO;
 
     @Autowired
-    public ImageService(@Qualifier("image_fake") ImageMetadataDAO imageMetadataDAO) {
+    public ImageService(@Qualifier("database_image") ImageMetadataDAO imageMetadataDAO) {
         this.imageMetadataDAO = imageMetadataDAO;
     }
 
@@ -37,19 +37,19 @@ public class ImageService {
         Base62 id;
         do {
             id = Base62.randomBase62(ImageMetadata.ID_LENGTH);
-        } while (imageMetadataDAO.isPresent(id));
+        } while (imageMetadataDAO.existsById(id));
 
         String originalFileName = file.getOriginalFilename();
         String ext = originalFileName == null ? "" : originalFileName.substring(originalFileName.lastIndexOf('.'));
         ImageMetadata imageMetadata = new ImageMetadata(uploaderUsername, id, ext);
-        imageMetadataDAO.addImage(imageMetadata);
+        imageMetadataDAO.save(imageMetadata);
         try {
             Path copyLocation = Paths.get(StringUtils.cleanPath(imageMetadata.getPath()));
             if (Files.exists(copyLocation))
                 throw new IOException();
             Files.copy(file.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            imageMetadataDAO.deleteImage(id);
+            imageMetadataDAO.deleteById(id);
             throw new ImageStorageException(file.getOriginalFilename());
         }
         return id;
@@ -58,12 +58,12 @@ public class ImageService {
     public Resource download(Base62 id) {
         String path = ImageMetadata.BASE_PATH + File.separator + id + ".jpg";
         String finalPath = path;
-        ImageMetadata imageMetadata = imageMetadataDAO.getImageById(id)
+        ImageMetadata imageMetadata = imageMetadataDAO.findById(id)
                 .or(() -> {
                     ImageMetadata imd = null;
                     if (Files.exists(Path.of(finalPath))) {
                         imd = new ImageMetadata(null, id, ".jpg");
-                        imageMetadataDAO.addImage(imd);
+                        imageMetadataDAO.save(imd);
                     }
                     return Optional.ofNullable(imd);
                 }).orElseThrow(() -> new ImageMetadataNotFoundException(id));
@@ -72,7 +72,7 @@ public class ImageService {
     }
 
     public boolean delete(Base62 id, String myUsername) {
-        ImageMetadata imageMetadata = imageMetadataDAO.getImageById(id).orElseThrow(() -> new ImageMetadataNotFoundException(id));
+        ImageMetadata imageMetadata = imageMetadataDAO.findById(id).orElseThrow(() -> new ImageMetadataNotFoundException(id));
         if (!Files.exists(Path.of(imageMetadata.getPath()))) {
             throw new ImageMetadataNotFoundException(id);
         }
@@ -83,7 +83,8 @@ public class ImageService {
             } catch (IOException e) {
                 return false;
             }
-            return imageMetadataDAO.deleteImage(id);
+            imageMetadataDAO.deleteById(id);
+            return true;
         } else {
             throw new AccessDeniedException(myUsername);
         }

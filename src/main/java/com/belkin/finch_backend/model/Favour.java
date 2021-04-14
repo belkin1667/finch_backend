@@ -9,12 +9,13 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 
-
-@Getter @Setter
+@Getter
+@Setter
 @Entity
-@Table(name = "guide_likes")
-@AllArgsConstructor @NoArgsConstructor
-public class Like implements Serializable {
+@Table(name = "guide_favours")
+@AllArgsConstructor
+@NoArgsConstructor
+public class Favour implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,7 +31,7 @@ public class Like implements Serializable {
         return new Base62(guide);
     }
 
-    public Like(String username, Base62 guideId) {
+    public Favour(String username, Base62 guideId) {
         this.username = username;
         this.guide = guideId.getId();
     }
@@ -42,8 +43,8 @@ public class Like implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Like) {
-            Like other = (Like) obj;
+        if (obj instanceof Favour) {
+            Favour other = (Favour) obj;
             if (this.hashCode() == obj.hashCode())
                 return username.equals(other.getUsername()) && guide.equals(other.getGuideId().getId());
         }

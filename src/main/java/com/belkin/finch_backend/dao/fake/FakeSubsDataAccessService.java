@@ -6,53 +6,54 @@ import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Repository("subs_fake")
+@Repository("fake_subs")
 public class FakeSubsDataAccessService implements SubsDAO {
 
     List<Subscription> database = new ArrayList<>();
 
     @Override
-    public boolean isUserPresentAsSubscription(String username) {
+    public boolean existsByUsername(String username) {
         log.info("Checking if user '" + username + "' present as someone's subscription in database...");
 
         return database.stream().anyMatch(s -> s.getUsername().equals(username));
     }
 
     @Override
-    public boolean isUserPresentAsSubscriber(String username) {
+    public boolean existsBySubscriber(String username) {
         log.info("Checking if user '" + username + "' present as someone's subscriber in database...");
 
         return database.stream().anyMatch(s -> s.getSubscriber().equals(username));
     }
 
     @Override
-    public Set<String> getUserSubscribers(String username) {
+    public boolean existsByUsernameAndAndSubscriber(String username, String subscriber) {
+        return false;
+    }
+
+
+    @Override
+    public Iterable<Subscription> findSubscriptionsByUsername(String username) {
         log.info("Reading subscribers of user '" + username + "'from database...");
 
-        if (isUserPresentAsSubscription(username))
+        if (this.existsByUsername(username))
             return database.stream()
                 .filter(subscription -> subscription.getUsername().equals(username))
-                .map(Subscription::getSubscriber)
                 .collect(Collectors.toSet());
         else
             return new HashSet<>();
     }
 
     @Override
-    public Set<String> getUserSubscriptions(String username) {
+    public Iterable<Subscription> findSubscriptionsBySubscriber(String username) {
         log.info("Reading subscriptions of user '" + username + "'from database...");
 
-        if (isUserPresentAsSubscriber(username)) {
+        if (this.existsBySubscriber(username)) {
             return database.stream()
                     .filter(subscription -> subscription.getSubscriber().equals(username))
-                    .map(Subscription::getUsername)
                     .collect(Collectors.toSet());
         }
         else {
@@ -61,44 +62,75 @@ public class FakeSubsDataAccessService implements SubsDAO {
     }
 
     @Override
-    public Integer getUserSubscribersCount(String username) {
-        log.info("Reading subscribers count of user '" + username + "'from database...");
-
-        return getUserSubscribers(username).size();
+    public long countBySubscriber(String subscriber) {
+        return 0;
     }
 
     @Override
-    public Integer getUserSubscriptionCount(String username) {
-        log.info("Reading subscriptions count of user '" + username + "'from database...");
-
-        return getUserSubscriptions(username).size();
+    public long countByUsername(String username) {
+        return 0;
     }
 
     @Override
-    public boolean addSubscription(Subscription subscription) {
+    public Subscription save(Subscription subscription) {
         log.info("Creating subscription relation " + new Gson().toJson(subscription) + " in database...");
 
-        if (isSubscriptionPresent(subscription))
-            return true;
-        else
-            return database.add(subscription);
+        if (!existsByUsernameAndAndSubscriber(subscription.getUsername(), subscription.getUsername())) {
+            database.add(subscription);
+        }
+        return subscription;
     }
 
     @Override
-    public boolean removeSubscription(Subscription subscription) {
-        log.info("Deleting subscription relation " + new Gson().toJson(subscription) + " from database...");
-
-        if (isSubscriptionPresent(subscription))
-            return database.remove(subscription);
-        else
-            return true;
+    public <S extends Subscription> Iterable<S> saveAll(Iterable<S> entities) {
+        return null;
     }
 
     @Override
-    public boolean isSubscriptionPresent(Subscription subscription) {
-        log.info("Checking if subscription relation " + new Gson().toJson(subscription) + " is present in database...");
+    public Optional<Subscription> findById(Integer integer) {
+        return Optional.empty();
+    }
 
-        return database.stream().anyMatch(s -> s.equals(subscription));
+    @Override
+    public boolean existsById(Integer id) {
+        log.info("Checking if subscription relation with id: " + id + " is present in database...");
+
+        return database.stream().anyMatch(s -> s.getId().equals(id));
+    }
+
+    @Override
+    public Iterable<Subscription> findAll() {
+        return null;
+    }
+
+    @Override
+    public Iterable<Subscription> findAllById(Iterable<Integer> ids) {
+        return null;
+    }
+
+    @Override
+    public long count() {
+        return 0;
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+
+    }
+
+    @Override
+    public void delete(Subscription entity) {
+
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends Subscription> entities) {
+
+    }
+
+    @Override
+    public void deleteAll() {
+
     }
 
 }
