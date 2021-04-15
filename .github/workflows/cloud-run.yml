@@ -50,5 +50,5 @@ jobs:
           --set-env-vars DATABASE_NAME=${{ secrets.DATABASE_NAME }} \
           --set-env-vars DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }} \
           --set-env-vars DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
-          --set-env-vars DATABASE_INSTANCE_CONNECTION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+          --set-env-vars GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
