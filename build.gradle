@@ -57,6 +57,9 @@ dependencies {
 
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter-sql-postgresql', version: '1.2.7.RELEASE'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-dependencies', version: '1.2.7.RELEASE', ext: 'pom'
+
+    implementation group: 'com.google.cloud.sql', name: 'postgres-socket-factory', version: '1.2.2'
+
 }
 
 test {
