@@ -1,16 +1,14 @@
 package com.belkin.finch_backend.api.controller;
 
 import com.belkin.finch_backend.api.dto.FeedGuideResponse;
+import com.belkin.finch_backend.api.dto.FeedPage;
 import com.belkin.finch_backend.api.dto.GuideResponse;
 import com.belkin.finch_backend.security.jwt.JwtConfig;
 import com.belkin.finch_backend.security.jwt.JwtTokenVerifier;
 import com.belkin.finch_backend.service.GuideService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
 import java.util.List;
@@ -35,6 +33,13 @@ public class FeedController {
 
         String myUsername = jwt.getRequesterUsername(authorizationHeader);
         return guideService.getFeedGuideOfSubscriptionsOfUser(myUsername);
+    }
+
+    @GetMapping("/page/{page}")
+    public FeedPage getFeedPage(@PathVariable("page") int page, @RequestHeader("Authorization") String authorizationHeader){
+        log.info("GET /feed with header Authorization = " + authorizationHeader);
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return new FeedPage(page, guideService.getFeedGuideOfSubscriptionsOfUser(myUsername, page));
     }
 
     @GetMapping("/full")

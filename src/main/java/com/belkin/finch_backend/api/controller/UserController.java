@@ -84,21 +84,7 @@ public class UserController {
     }
 
 
-    @GetMapping(path = "/subs/subscribers")
-    public Set<String> getSubscribers(@RequestHeader("Authorization") String authorizationHeader) {
-        log.info("GET /users/subs/subscribers with header Authorization = '" + authorizationHeader + "'");
 
-        String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        return userService.getSubscribers(myUsername);
-    }
-
-    @GetMapping(path = "/subs/subscriptions")
-    public Set<String> getSubscriptions(@RequestHeader("Authorization") String authorizationHeader) {
-        log.info("GET /users/subs/subscriptions with header Authorization = '" + authorizationHeader + "'");
-
-        String myUsername = jwt.getRequesterUsername(authorizationHeader);
-        return userService.getSubscriptions(myUsername);
-    }
 
     @PostMapping(path = "/subs/{username}")
     public void subscribe(@PathVariable("username") String subscription, @RequestHeader("Authorization") String authorizationHeader) {
@@ -116,4 +102,42 @@ public class UserController {
         userService.unsubscribe(myUsername, subscription);
     }
 
+    @GetMapping(path = "/subs/subscribers")
+    public Set<String> getSubscribers(@RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /users/subs/subscribers with header Authorization = '" + authorizationHeader + "'");
+
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return userService.getSubscribers(myUsername);
+    }
+
+    @GetMapping(path = "/subs/subscribers/{username}")
+    public Set<String> getSubscribers(@PathVariable("username") String username, @RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /users/subs/subscribers/" + username + " with header Authorization = '" + authorizationHeader + "'");
+
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return userService.getSubscribers(myUsername, username);
+    }
+
+    @GetMapping(path = "/subs/subscriptions")
+    public Set<String> getSubscriptions(@RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /users/subs/subscriptions with header Authorization = '" + authorizationHeader + "'");
+
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return userService.getSubscriptions(myUsername);
+    }
+
+    @GetMapping(path =  "/subs/subscriptions/{username}")
+    public Set<String> getSubscriptions(@PathVariable("username") String username, @RequestHeader("Authorization") String authorizationHeader) {
+        log.info("GET /users/subs/subscriptions/" + username + " with header Authorization = '" + authorizationHeader + "'");
+
+        String myUsername = jwt.getRequesterUsername(authorizationHeader);
+        return userService.getSubscriptions(myUsername, username);
+    }
+
+    /*
+        others Subscribers
+        others Subscriptions
+        is subscribed
+        is subscribed in user entity
+     */
 }

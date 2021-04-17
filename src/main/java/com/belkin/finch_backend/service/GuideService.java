@@ -160,12 +160,12 @@ public class GuideService {
     }
 
     public List<Base62> getCardsIdsByGuideId(Base62 guideId) {
-        return cardDAO.findCardsByGuideId(guideId).stream().map(Card::getId).collect(Collectors.toList());
+        return cardDAO.findCardsByGuide(guideId.getId()).stream().map(Card::getId).collect(Collectors.toList());
     }
 
     public List<CardResponse> getCardsByGuideId(Base62 guideId, String myUsername) {
         AccessType accessType = getGuideById(myUsername, guideId).getType();
-        return cardDAO.findCardsByGuideId(guideId).stream()
+        return cardDAO.findCardsByGuide(guideId.getId()).stream()
                 .map(c -> new CardResponse(c, accessType))
                 .collect(Collectors.toList());
     }
@@ -223,6 +223,13 @@ public class GuideService {
         return guides;
     }
 
+    public List<GuideResponse> getGuidesOfSubscriptionsOfUser(String myUsername, int page) {
+        List<GuideResponse> guides =  getGuidesOfSubscriptionsOfUser(myUsername);
+        int offset = page * 10;
+        int limit = 10;
+        return guides.subList(Math.min(guides.size(), offset), Math.min(guides.size(), offset + limit));
+    }
+
     public List<String> getGuideIdsOfSubscriptionsOfUser(String myUsername) {
         return getGuidesOfSubscriptionsOfUser(myUsername).stream()
                 .map(GuideResponse::getId)
@@ -235,6 +242,11 @@ public class GuideService {
             .collect(Collectors.toList());
     }
 
+    public List<FeedGuideResponse> getFeedGuideOfSubscriptionsOfUser(String myUsername, int page) {
+        return getGuidesOfSubscriptionsOfUser(myUsername, page).stream()
+                .map(g -> new FeedGuideResponse(g.getId(), g.getAuthorUsername(), userService.getUserProfilePhotoUrlByUsername(g.getAuthorUsername())))
+                .collect(Collectors.toList());
+    }
 
     /* ========================= Likes API ========================= */
 
@@ -243,7 +255,7 @@ public class GuideService {
     }
 
     public void unlikeGuide(String myUsername, Base62 id) {
-        guideLikesDAO.delete(new Like(myUsername, id));
+        guideLikesDAO.deleteByUsernameAndGuide(myUsername, id.getId());
     }
 
     public boolean hasLike(String myUsername, Base62 id) {
@@ -258,7 +270,7 @@ public class GuideService {
     }
 
     public void unfavourGuide(String myUsername, Base62 id) {
-        guideFavorDAO.delete(new Favour(myUsername, id));
+        guideFavorDAO.deleteByUsernameAndGuide(myUsername, id.getId());
     }
 
     public boolean hasFavour(String myUsername, Base62 id) {

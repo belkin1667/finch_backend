@@ -24,7 +24,7 @@ public class Card {
     Base62 id;
 
     @Column(name = "guide_id")
-    Base62 guideId;
+    String guide;
 
     @Column(name = "thumbnail_id")
     String thumbnailUrl;
@@ -38,11 +38,18 @@ public class Card {
     @ElementCollection
     List<Content> content;
 
+    public Base62 getGuideId() {
+        return new Base62(guide);
+    }
+    public void setGuideId(Base62 id) {
+        setGuide(id.getId());
+    }
+
     public Card(Base62 id, Base62 guideId, String thumbnailUrl, String title, String location, List<Content> content) {
         log.info("Creating Card...");
 
         this.id = id;
-        this.guideId = guideId;
+        this.guide = guideId.getId();
         this.title = title;
         this.location = location;
         this.content = content;

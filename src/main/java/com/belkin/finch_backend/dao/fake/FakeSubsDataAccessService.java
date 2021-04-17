@@ -30,8 +30,13 @@ public class FakeSubsDataAccessService implements SubsDAO {
     }
 
     @Override
-    public boolean existsByUsernameAndAndSubscriber(String username, String subscriber) {
+    public boolean existsByUsernameAndSubscriber(String username, String subscriber) {
         return false;
+    }
+
+    @Override
+    public void deleteByUsernameAndSubscriber(String myUsername, String subscription) {
+
     }
 
 
@@ -75,7 +80,7 @@ public class FakeSubsDataAccessService implements SubsDAO {
     public Subscription save(Subscription subscription) {
         log.info("Creating subscription relation " + new Gson().toJson(subscription) + " in database...");
 
-        if (!existsByUsernameAndAndSubscriber(subscription.getUsername(), subscription.getUsername())) {
+        if (!existsByUsernameAndSubscriber(subscription.getUsername(), subscription.getUsername())) {
             database.add(subscription);
         }
         return subscription;
