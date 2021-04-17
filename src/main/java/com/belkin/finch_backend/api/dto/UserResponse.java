@@ -19,14 +19,14 @@ public class UserResponse {
     private User.ProfileAccess profileAccess;
     private long subscriptionsCount;
     private long subscribersCount;
+    private boolean isSubscribed;
     private AccessType type;
 
-
-
-    public UserResponse(User user, long subscriptionsCount, long subscribersCount, AccessType type) {
+    public UserResponse(User user, long subscriptionsCount, long subscribersCount, AccessType type, boolean isSubscribed) {
         this(user, type, false);
         this.subscribersCount = subscribersCount;
         this.subscriptionsCount = subscriptionsCount;
+        this.isSubscribed = isSubscribed;
         log.info("Created UserResponse: " + new Gson().toJson(this));
     }
 

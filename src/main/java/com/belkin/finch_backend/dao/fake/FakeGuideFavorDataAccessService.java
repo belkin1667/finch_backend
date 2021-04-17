@@ -61,6 +61,11 @@ public class FakeGuideFavorDataAccessService implements GuideFavourDAO {
     }
 
     @Override
+    public void deleteByUsernameAndGuide(String myUsername, String guide) {
+
+    }
+
+    @Override
     public <S extends Favour> Iterable<S> saveAll(Iterable<S> entities) {
         return null;
     }

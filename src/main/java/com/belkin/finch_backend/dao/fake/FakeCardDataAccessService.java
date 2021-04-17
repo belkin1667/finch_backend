@@ -29,14 +29,6 @@ public class FakeCardDataAccessService implements CardDAO {
         return card;
     }
 
-    @Override
-    public List<Card> findCardsByGuideId(Base62 guideId) {
-        log.info("Reading cards of guide with guide_id = " + guideId.getId() + " from database...");
-
-        return database.stream()
-                .filter(c -> c.getGuideId().equals(guideId))
-                .collect(Collectors.toList());
-    }
 
     @Override
     public <S extends Card> Iterable<S> saveAll(Iterable<S> entities) {
@@ -93,5 +85,10 @@ public class FakeCardDataAccessService implements CardDAO {
     @Override
     public long count() {
         return 0;
+    }
+
+    @Override
+    public List<Card> findCardsByGuide(String guideId) {
+        return null;
     }
 }

@@ -50,7 +50,7 @@ public class StartupRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        //createImageDirectory();
+        createImageDirectory();
         //emptyImageDirectory();
         //generateMockData();
     }

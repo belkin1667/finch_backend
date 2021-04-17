@@ -10,6 +10,6 @@ import java.util.List;
 @Repository("database_card")
 public interface CardDAO extends CrudRepository<Card, Base62> {
 
-    List<Card> findCardsByGuideId(Base62 guideId);
+    List<Card> findCardsByGuide(String guideId);
 
 }

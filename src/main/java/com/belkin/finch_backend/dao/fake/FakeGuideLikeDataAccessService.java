@@ -62,6 +62,11 @@ public class FakeGuideLikeDataAccessService implements GuideLikeDAO {
     }
 
     @Override
+    public void deleteByUsernameAndGuide(String myUsername, String id) {
+
+    }
+
+    @Override
     public <S extends Like> Iterable<S> saveAll(Iterable<S> entities) {
         return null;
     }

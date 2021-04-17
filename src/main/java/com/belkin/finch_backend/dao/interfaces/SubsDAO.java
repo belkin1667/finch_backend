@@ -3,8 +3,7 @@ package com.belkin.finch_backend.dao.interfaces;
 import com.belkin.finch_backend.model.Subscription;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Set;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository("database_subs")
 public interface SubsDAO extends CrudRepository<Subscription, Integer> {
@@ -21,6 +20,8 @@ public interface SubsDAO extends CrudRepository<Subscription, Integer> {
 
     boolean existsBySubscriber(String username);
 
-    boolean existsByUsernameAndAndSubscriber(String username, String subscriber);
+    boolean existsByUsernameAndSubscriber(String username, String subscriber);
 
+    @Transactional
+    void deleteByUsernameAndSubscriber(String myUsername, String subscription);
 }

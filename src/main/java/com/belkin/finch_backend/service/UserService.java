@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.belkin.finch_backend.api.dto.AccessType.*;
@@ -51,7 +50,6 @@ public class UserService {
     public User updateUser(String username, User user) {
         userDao.deleteById(username);
         return userDao.save(user);
-        //return userDao.save(username, user);
     }
 
     public AccessType getAccessType(String myUsername, String requestedUsername) {
@@ -68,8 +66,8 @@ public class UserService {
                 case ALL:
                     return NOT_ME_FULL_ACCESS;
                 case MUTUAL_FOLLOWERS:
-                    if (subsDao.existsByUsernameAndAndSubscriber(myUsername, requestedUsername) &&
-                            subsDao.existsByUsernameAndAndSubscriber(requestedUsername, myUsername)) {
+                    if (subsDao.existsByUsernameAndSubscriber(myUsername, requestedUsername) &&
+                            subsDao.existsByUsernameAndSubscriber(requestedUsername, myUsername)) {
                         return NOT_ME_FULL_ACCESS;
                     }
                     return NOT_ME_PARTIAL_ACCESS;
@@ -92,9 +90,10 @@ public class UserService {
         }
 
         return new UserResponse(requestedUser,
-                subsDao.countBySubscriber(requestedUsername),
                 subsDao.countByUsername(requestedUsername),
-                accessType);
+                subsDao.countBySubscriber(requestedUsername),
+                accessType,
+                subsDao.existsByUsernameAndSubscriber(requestedUsername, myUsername));
     }
 
     public UserResponse getUser(String myUsername, String requestedUsername) {
@@ -103,19 +102,47 @@ public class UserService {
         AccessType accessType = getAccessType(myUsername, requestedUsername);
         if (accessType != null)
             return new UserResponse(requestedUser,
-                    subsDao.countBySubscriber(requestedUsername),
                     subsDao.countByUsername(requestedUsername),
-                    accessType);
+                    subsDao.countBySubscriber(requestedUsername),
+                    accessType,
+                    subsDao.existsByUsernameAndSubscriber(requestedUsername, myUsername));
         else
             return null;
     }
 
     public Set<String> getSubscribers(String myUsername) {
-        return Lists.newArrayList(subsDao.findSubscriptionsByUsername(myUsername)).stream().map(Subscription::getSubscriber).collect(Collectors.toSet());
+        return Lists.newArrayList(subsDao.findSubscriptionsBySubscriber(myUsername)).stream().map(Subscription::getUsername).collect(Collectors.toSet());
+    }
+
+    public Set<String> getSubscribers(String myUsername, String requestedUsername) {
+        AccessType access = getAccessType(myUsername, requestedUsername);
+        System.out.println(access.toString());
+        switch (access) {
+            case ME_FULL_ACCESS:
+            case ME_PARTIAL_ACCESS:
+            case NOT_ME_FULL_ACCESS:
+                return getSubscribers(requestedUsername);
+            case NOT_ME_PARTIAL_ACCESS:
+            default:
+                return Set.of();
+        }
     }
 
     public Set<String> getSubscriptions(String myUsername) {
-        return Lists.newArrayList(subsDao.findSubscriptionsBySubscriber(myUsername)).stream().map(Subscription::getUsername).collect(Collectors.toSet());
+        return Lists.newArrayList(subsDao.findSubscriptionsByUsername(myUsername)).stream().map(Subscription::getSubscriber).collect(Collectors.toSet());
+    }
+
+    public Set<String> getSubscriptions(String myUsername, String requestedUsername) {
+        AccessType access = getAccessType(myUsername, requestedUsername);
+        switch (access) {
+            case ME_FULL_ACCESS:
+            case ME_PARTIAL_ACCESS:
+            case NOT_ME_FULL_ACCESS:
+                return getSubscriptions(requestedUsername);
+            case NOT_ME_PARTIAL_ACCESS:
+            default:
+                return Set.of();
+        }
     }
 
     public Subscription subscribe(String myUsername, String subscription) {
@@ -128,8 +155,8 @@ public class UserService {
     public void unsubscribe(String myUsername, String subscription) {
         if (myUsername.equals(subscription))
             throw new SelfSubscribeException();
-        Subscription s = new Subscription(subscription, myUsername);
-        subsDao.delete(s);
+
+        subsDao.deleteByUsernameAndSubscriber(myUsername, subscription);
     }
 
     public String getUserProfilePhotoUrlByUsername(String username) {

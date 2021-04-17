@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Repository("fake_user")
@@ -87,4 +88,18 @@ public class FakeUserDataAccessService implements UserDAO {
 
     }
 
+    @Override
+    public Set<User> findByUsernameContainsIgnoreCaseOrTitleContainsIgnoreCase(String username, String title) {
+        return null;
+    }
+
+    @Override
+    public Set<User> findByUsernameContainsIgnoreCase(String username) {
+        return null;
+    }
+
+    @Override
+    public Set<User> findByTitleContainsIgnoreCase(String title) {
+        return null;
+    }
 }
