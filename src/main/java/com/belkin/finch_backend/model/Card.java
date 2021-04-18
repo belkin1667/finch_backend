@@ -18,7 +18,7 @@ import java.util.List;
 public class Card {
 
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
-    public static final String DEFAULT_THUMBNAIL_URL = "2l0yHF5D6rW";
+    public static final String DEFAULT_THUMBNAIL_URL = "";
 
     @EmbeddedId
     Base62 id;

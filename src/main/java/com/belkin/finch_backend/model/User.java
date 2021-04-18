@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Table(name = "myuser")
 public class User {
 
-    private final String DEFAULT_PROFILE_PHOTO_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/%D0%9F%D1%83%D1%82%D0%B8%D0%BD_23.12.20.jpg/416px-%D0%9F%D1%83%D1%82%D0%B8%D0%BD_23.12.20.jpg";
+    private final String DEFAULT_PROFILE_PHOTO_URL = "";
     private final ProfileAccess DEFAULT_PROFILE_ACCESS = ProfileAccess.ALL;
 
     @NonNull
