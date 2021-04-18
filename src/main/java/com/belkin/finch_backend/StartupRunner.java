@@ -6,6 +6,12 @@ import com.belkin.finch_backend.security.ApplicationUserRole;
 import com.belkin.finch_backend.security.dao.ApplicationUserDAO;
 import com.belkin.finch_backend.security.model.ApplicationUser;
 import com.belkin.finch_backend.util.Base62;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
@@ -15,11 +21,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.belkin.finch_backend.security.ApplicationUserRole.USER;
 
@@ -53,7 +61,45 @@ public class StartupRunner implements ApplicationRunner {
         createImageDirectory();
         //emptyImageDirectory();
         //generateMockData();
+        getClassesSpec();
     }
+
+
+    private void getClassesSpec() {
+
+        //scan urls that contain 'my.package', include inputs starting with 'my.package', use the default scanners
+        Reflections reflections = new Reflections("com.belkin.finch_backend",
+                new SubTypesScanner(false));
+        Set<Class<? extends Object>> classes = reflections.getSubTypesOf(Object.class);
+        System.out.println("Size " + classes.size());
+        for (var c : classes) {
+            String res = c.getName() + "\n\r";
+            List<String> constructors = Arrays.stream(c.getDeclaredConstructors())
+                    .map(Constructor::toString)
+                    //.map(s -> {
+                    //    int index = s.lastIndexOf('.');
+                    //    return s.substring(index + 1);
+                    //})
+                    .collect(Collectors.toList());
+            System.out.println(res);
+            System.out.println(constructors);
+            break;
+        }
+    }
+    /* 1. split s by ' '
+          s[0] - modifier
+          s[1] - constructor
+       2. split s[1] by '('
+          str[0] - constructor name
+          str[1] - params
+       3. delete ')' in str[1]
+       4. split str[1] by ','
+       5. str[0], & str[1].
+
+
+     */
+   //public com.belkin.finch_backend.model.Favour(java.lang.Integer,java.lang.String,java.lang.String)
+
 
     private final UserDAO userDAO;
     private final GuideDAO guideDAO;
