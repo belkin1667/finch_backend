@@ -20,8 +20,13 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
@@ -65,28 +70,74 @@ public class StartupRunner implements ApplicationRunner {
     }
 
 
-    private void getClassesSpec() {
+    private void getClassesSpec() throws IOException {
+        String path = "." + File.separator + "classes";
+        if (!Files.exists(Paths.get(path)))
+            Files.createDirectory(Paths.get(path));
+
+        Files.list(Paths.get(path))
+                .map(filename -> {
+                    try {
+                        return Files.deleteIfExists(filename);
+                    } catch (IOException e) {
+                        return false;
+                    }
+                });
+
+        String linesep = "\n";
 
         //scan urls that contain 'my.package', include inputs starting with 'my.package', use the default scanners
         Reflections reflections = new Reflections("com.belkin.finch_backend",
                 new SubTypesScanner(false));
         Set<Class<? extends Object>> classes = reflections.getSubTypesOf(Object.class);
-        System.out.println("Size " + classes.size());
         for (var c : classes) {
-            String res = c.getName() + "\n\r";
+            String res = "Класс," + c.getName() + linesep;
             List<String> constructors = Arrays.stream(c.getDeclaredConstructors())
-                    .map(Constructor::toString)
-                    //.map(s -> {
-                    //    int index = s.lastIndexOf('.');
-                    //    return s.substring(index + 1);
-                    //})
+                    .map(constructor -> {
+                        String accessModifier = Modifier.toString(constructor.getModifiers());
+                        String name = c.getSimpleName();
+                        List<String> params = Arrays.stream(constructor.getParameterTypes())
+                                .map(Class::getSimpleName)
+                                .collect(Collectors.toList());
+                        return name + "," + accessModifier + "," + String.join("; ", params) + ", ";
+                    }).collect(Collectors.toList());
+            res += "Конструкторы" + linesep;
+            res += "Имя, Модификатор, Аргументы, Назначение" + linesep;
+            res += String.join(linesep, constructors) + linesep;
+            List<String> methods = Arrays.stream(c.getDeclaredMethods())
+                    .map(method -> {
+                        String accessModifier = Modifier.toString(method.getModifiers());
+                        String returnType = method.getReturnType().getSimpleName();
+                        String name = method.getName();
+                        List<String> params = Arrays.stream(method.getParameters())
+                                .map(p -> p.getType().getSimpleName())
+                                .collect(Collectors.toList());
+                        return name + "," + accessModifier + "," + returnType + "," + String.join("; ", params) + ", ";
+                    })
                     .collect(Collectors.toList());
-            System.out.println(res);
-            System.out.println(constructors);
-            break;
+            res += "Методы" + linesep;
+            res += "Имя, Модификатор, Тип возвращаемого значения, Аргументы, Назначение" + linesep;
+            res += String.join(linesep, methods) + linesep;
+            List<String> fields = Arrays.stream(c.getDeclaredFields())
+                    .map(field -> {
+                        String name = field.getName();
+                        String accessModifier = Modifier.toString(field.getModifiers());
+                        String type = field.getType().getSimpleName();
+                        return name + "," + accessModifier + "," + type + ", ";
+                    })
+                    .collect(Collectors.toList());
+            res += "Поля" + linesep;
+            res += "Имя, Модификатор, Тип, Назначение" + linesep;
+            res += String.join(linesep, fields) + linesep;
+
+            String fileName = path +  File.separator + c.getName() + ".csv";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+            writer.write(res);
+            writer.close();
         }
     }
-    /* 1. split s by ' '
+    /*
+       1. split s by ' '
           s[0] - modifier
           s[1] - constructor
        2. split s[1] by '('
@@ -96,9 +147,8 @@ public class StartupRunner implements ApplicationRunner {
        4. split str[1] by ','
        5. str[0], & str[1].
 
-
      */
-   //public com.belkin.finch_backend.model.Favour(java.lang.Integer,java.lang.String,java.lang.String)
+    //public com.belkin.finch_backend.model.Favour(java.lang.Integer,java.lang.String,java.lang.String)
 
 
     private final UserDAO userDAO;
@@ -188,7 +238,6 @@ public class StartupRunner implements ApplicationRunner {
         subs.add(new Subscription("elon", "johndoe"));
 
 
-
         images.add(new ImageMetadata("mike", new Base62("J2o89z1DFMj")));
         images.add(new ImageMetadata("johndoe", new Base62("2l0yHF5D6rW")));
         images.add(new ImageMetadata("donald", new Base62("tm7ghZDWKoB")));
@@ -198,7 +247,6 @@ public class StartupRunner implements ApplicationRunner {
         images.add(new ImageMetadata("mike", new Base62("WrT6X9L2sSp")));
         images.add(new ImageMetadata("mike", new Base62("sUHNzibZiwf")));
         images.add(new ImageMetadata("mike", new Base62("2cye96E6YMY")));
-
 
 
         guides.add(new Guide("mike",
@@ -214,7 +262,7 @@ public class StartupRunner implements ApplicationRunner {
         Collections.shuffle(content);
 
         cards.add(new Card(new Base62("duLzlQcGeHV"),
-                new Base62 ("XgKGSVikuD2"),
+                new Base62("XgKGSVikuD2"),
                 "sUHNzibZiwf",
                 "Rome",
                 "Italy",
@@ -223,7 +271,7 @@ public class StartupRunner implements ApplicationRunner {
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("SboCW3kK4sn"),
-                new Base62 ("XgKGSVikuD2"),
+                new Base62("XgKGSVikuD2"),
                 "2cye96E6YMY",
                 "Florence",
                 "Italy",
@@ -243,7 +291,7 @@ public class StartupRunner implements ApplicationRunner {
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("ItwAnV4dips"),
-                new Base62 ("ACcvoVo0M58"),
+                new Base62("ACcvoVo0M58"),
                 "WrT6X9L2sSp",
                 "Washington",
                 "USA",
@@ -252,7 +300,7 @@ public class StartupRunner implements ApplicationRunner {
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("FnGK1ymFvCR"),
-                new Base62 ("ACcvoVo0M58"),
+                new Base62("ACcvoVo0M58"),
                 "sUHNzibZiwf",
                 "New York",
                 "USA",
@@ -261,7 +309,7 @@ public class StartupRunner implements ApplicationRunner {
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("pArb01rdFt2"),
-                new Base62 ("ACcvoVo0M58"),
+                new Base62("ACcvoVo0M58"),
                 "2cye96E6YMY",
                 "Florida",
                 "USA",
@@ -281,7 +329,7 @@ public class StartupRunner implements ApplicationRunner {
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("DQGm58bvpSp"),
-                new Base62 ("int7gu7yFtA"),
+                new Base62("int7gu7yFtA"),
                 "sUHNzibZiwf",
                 "Rome",
                 "Italy",
@@ -301,7 +349,7 @@ public class StartupRunner implements ApplicationRunner {
 
         Collections.shuffle(content);
         cards.add(new Card(new Base62("hkBRrXIoSef"),
-                new Base62 ("hpM8wkYWrNb"),
+                new Base62("hpM8wkYWrNb"),
                 "sUHNzibZiwf",
                 "Rome",
                 "Italy",
@@ -361,6 +409,6 @@ public class StartupRunner implements ApplicationRunner {
                     } catch (IOException e) {
                         return false;
                     }
-            });
+                });
     }
 }

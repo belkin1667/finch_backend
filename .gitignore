@@ -38,3 +38,6 @@ out/
 
 ### Local Image Storage ###
 /images/
+
+### Classes Decription in CSV format ###
+/classes/
