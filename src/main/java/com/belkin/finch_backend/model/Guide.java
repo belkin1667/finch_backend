@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Guide {
 
-    public static final String DEFAULT_THUMBNAIL_URL = "2l0yHF5D6rW";
+    public static final String DEFAULT_THUMBNAIL_URL = "";
 
     @EmbeddedId
     private Base62 id;
