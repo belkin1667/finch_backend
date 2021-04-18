@@ -2,7 +2,7 @@ package com.belkin.finch_backend.security.api;
 
 import com.belkin.finch_backend.security.dto.RegistrationRequest;
 import com.belkin.finch_backend.security.exception.JwtTokenWasNotProvidedException;
-import com.belkin.finch_backend.security.jwt.dto.AuthenticationRequest;
+import com.belkin.finch_backend.security.dto.AuthenticationRequest;
 import com.belkin.finch_backend.security.service.ApplicationUserService;
 import com.belkin.finch_backend.service.UserService;
 import com.google.gson.Gson;

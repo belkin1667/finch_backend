@@ -1,4 +1,4 @@
-package com.belkin.finch_backend.security.jwt.dto;
+package com.belkin.finch_backend.security.dto;
 
 public class AuthenticationRequest {
 

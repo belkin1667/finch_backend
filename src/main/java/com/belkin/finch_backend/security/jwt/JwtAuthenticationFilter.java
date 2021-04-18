@@ -1,6 +1,6 @@
 package com.belkin.finch_backend.security.jwt;
 
-import com.belkin.finch_backend.security.jwt.dto.AuthenticationRequest;
+import com.belkin.finch_backend.security.dto.AuthenticationRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;

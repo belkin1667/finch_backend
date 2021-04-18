@@ -93,7 +93,7 @@ public class UserService {
                 subsDao.countByUsername(requestedUsername),
                 subsDao.countBySubscriber(requestedUsername),
                 accessType,
-                subsDao.existsByUsernameAndSubscriber(requestedUsername, myUsername));
+                subsDao.existsByUsernameAndSubscriber(myUsername, requestedUsername));
     }
 
     public UserResponse getUser(String myUsername, String requestedUsername) {
@@ -105,7 +105,7 @@ public class UserService {
                     subsDao.countByUsername(requestedUsername),
                     subsDao.countBySubscriber(requestedUsername),
                     accessType,
-                    subsDao.existsByUsernameAndSubscriber(requestedUsername, myUsername));
+                    subsDao.existsByUsernameAndSubscriber(myUsername, requestedUsername));
         else
             return null;
     }
