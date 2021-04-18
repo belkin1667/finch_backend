@@ -148,7 +148,7 @@ public class UserService {
     public Subscription subscribe(String myUsername, String subscription) {
         if (myUsername.equals(subscription))
             throw new SelfSubscribeException();
-        Subscription s = new Subscription(subscription, myUsername);
+        Subscription s = new Subscription(myUsername, subscription);
         return subsDao.save(s);
     }
 
