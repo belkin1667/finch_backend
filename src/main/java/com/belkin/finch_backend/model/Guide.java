@@ -10,6 +10,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -47,9 +48,22 @@ public class Guide {
     @ElementCollection
     private List<String> tags;
 
+    /**
+     * Converts to string to format "yyyy-MM-ddThh:mm:ss+01:00"
+     * @param datetime String in format "yyyy-MM-ddThh:mm:ss.sssZ"
+     * @return Formatted Datetime
+     */
+    private static OffsetDateTime parseDate(String datetime) {
+        if (datetime == null || datetime.isEmpty() || datetime.isBlank())
+            return null;
+
+        int index = datetime.lastIndexOf('.');
+        String travelDateString = datetime.substring(0, index) + "+01:00";
+        return OffsetDateTime.parse(travelDateString, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
+
     public Guide(String authorUsername, Base62 id, String title, String description, String location, OffsetDateTime createdDate, OffsetDateTime travelDate, String thumbnailUrl, List<String> tags) {
         log.info("Creating Guide...");
-
         this.authorUsername = authorUsername;
         this.id = id;
         this.title = title;
@@ -63,6 +77,10 @@ public class Guide {
             this.thumbnailUrl = thumbnailUrl;
         this.tags = tags;
         log.info("Created guide instance: " + new Gson().toJson(this));
+    }
+
+    public Guide(String authorUsername, Base62 id, String title, String description, String location, OffsetDateTime createdDate, String travelDate, String thumbnailUrl, List<String> tags) {
+        this(authorUsername, id, title, description, location, createdDate, parseDate(travelDate), thumbnailUrl, tags);
     }
 
     public void edit(Guide newGuide) {
