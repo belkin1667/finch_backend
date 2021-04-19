@@ -14,7 +14,7 @@ public class GuideRequest {
     private String title;
     private String description;
     private String location;
-    private OffsetDateTime travelDate;
+    private String travelDate;
     private String thumbnailUrl;
     private List<String> tags;
 }
