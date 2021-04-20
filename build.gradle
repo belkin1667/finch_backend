@@ -34,20 +34,19 @@ dependencies {
     implementation 'com.google.guava:guava:28.1-jre'
 
     //JWT Support
-    compile 'io.jsonwebtoken:jjwt-api:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
     runtime 'io.jsonwebtoken:jjwt-impl:0.11.2', 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
     //Swagger
-    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
-    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.7.0'
-    compile('org.springframework.boot:spring-boot-starter-web')
+    //compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
+    implementation 'io.springfox:springfox-swagger2:2.7.0'
+    //compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.7.0'
+    implementation 'io.springfox:springfox-swagger-ui:2.7.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
     //Lombok
     compileOnly "org.projectlombok:lombok:1.18.8"
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
-
-    //ModelMapper
-    compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.2'
 
     implementation 'com.google.code.gson:gson:2.8.6'
 
@@ -59,9 +58,6 @@ dependencies {
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-dependencies', version: '1.2.7.RELEASE', ext: 'pom'
 
     implementation group: 'com.google.cloud.sql', name: 'postgres-socket-factory', version: '1.2.2'
-
-
-
 
     implementation group: 'org.reflections', name: 'reflections', version: '0.9.12'
 
