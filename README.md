@@ -1,11 +1,22 @@
 # Backend part of social network for travelers *Finch*
-Belkin Mike (Backend) & Aretm Goncharov (Frontend) Software Engineering Course Work at National Research University Higher School of Economics, Faculty of Computer Science  
-Moscow, Russia
-2021
 
-See Frontend Repository [here](https://github.com/artemgoncharov2000/finch-frontend) (React Native iOS app)
+### References
+See Frontend Repository [here](https://github.com/artemgoncharov2000/finch-frontend) (React Native iOS app)  
 
-# Local Deployment Guide
+### Reviews
+* [Academic Adviser Review by Alexandrov D. V.](https://docdro.id/sebLfx4)
+
+### Documentation
+*GOST 19 (Russian Software Documentation Standard ГОСТ 19 ЕСПД) documentation*
+1. [Explanatory Note](https://docdro.id/ZGbGGHS)
+3. [Requirements. Backend](https://docdro.id/hd5If0w)
+4. [Requirements. Backend & Frontend](https://docdro.id/B88Yi18)
+5. [Testing Plan & Methodology. Backend](https://docdro.id/7o8ui1G)
+6. [Testing Plan & Methodology. Backend & Frontend](https://docdro.id/aezeC4A)
+7. [Programmer's Guide](https://docdro.id/aqDzXjp)
+8. [Program Sources](https://docdro.id/3u5KqFF)
+
+## Local Deployment Guide
 1. Install PostgreSQL 13 with username {dbusername} and password {dbpassword}
 2. Create database with name {dbname}
 ```
