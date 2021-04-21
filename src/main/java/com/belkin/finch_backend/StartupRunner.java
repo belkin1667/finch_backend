@@ -66,7 +66,7 @@ public class StartupRunner implements ApplicationRunner {
         createImageDirectory();
         //emptyImageDirectory();
         //generateMockData();
-        getClassesSpec();
+        //getClassesSpec();
     }
 
 
