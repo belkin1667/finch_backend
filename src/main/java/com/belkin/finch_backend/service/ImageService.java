@@ -32,7 +32,7 @@ public class ImageService {
         this.imageMetadataDAO = imageMetadataDAO;
     }
 
-    public Base62 upload(MultipartFile file, String uploaderUsername) {
+    public Base62 uploadGenerateId(MultipartFile file, String uploaderUsername) {
 
         Base62 id;
         do {
@@ -41,6 +41,18 @@ public class ImageService {
 
         String originalFileName = file.getOriginalFilename();
         String ext = originalFileName == null ? "" : originalFileName.substring(originalFileName.lastIndexOf('.'));
+
+        return upload(id, uploaderUsername, ext, file);
+    }
+
+    public Base62 uploadNoId(MultipartFile file, String uploaderUsername) {
+        String originalFileName = file.getOriginalFilename();
+        String ext = originalFileName == null ? "" : originalFileName.substring(originalFileName.lastIndexOf('.'));
+        String id = originalFileName == null ? "" : originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+        return upload(new Base62(id), uploaderUsername, ext, file);
+    }
+
+    private Base62 upload(Base62 id, String  uploaderUsername, String ext, MultipartFile file) {
         ImageMetadata imageMetadata = new ImageMetadata(uploaderUsername, id, ext);
         imageMetadataDAO.save(imageMetadata);
         try {

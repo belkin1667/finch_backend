@@ -41,12 +41,20 @@ public class ImageController {
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
+    @PostMapping("/upload/noid")
+    public Base62 addImageNoId(@RequestParam("file") MultipartFile file, @RequestHeader("Authorization") String authorizationHeader) {
+        log.info("POST /i/upload with header Authorization = '" + authorizationHeader + "'");
+
+        String username = jwt.getRequesterUsername(authorizationHeader);
+        return imageService.uploadNoId(file, username);
+    }
+
     @PostMapping("/upload")
     public Base62 addImage(@RequestParam("file") MultipartFile file, @RequestHeader("Authorization") String authorizationHeader) {
         log.info("POST /i/upload with header Authorization = '" + authorizationHeader + "'");
 
         String username = jwt.getRequesterUsername(authorizationHeader);
-        return imageService.upload(file, username);
+        return imageService.uploadGenerateId(file, username);
     }
 
     @DeleteMapping(path ="/{id}")
