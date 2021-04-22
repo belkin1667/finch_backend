@@ -8,6 +8,7 @@ import com.belkin.finch_backend.security.jwt.JwtTokenVerifier;
 import com.belkin.finch_backend.service.GuideService;
 import com.belkin.finch_backend.util.Base62;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
@@ -21,7 +22,7 @@ public class CardController {
     private final GuideService guideService;
     private final JwtTokenVerifier jwt;
 
-
+    @Autowired
     public CardController(GuideService guideService, JwtConfig jwtConfig, SecretKey secretKey) {
         this.guideService = guideService;
         this.jwt = new JwtTokenVerifier(jwtConfig, secretKey);

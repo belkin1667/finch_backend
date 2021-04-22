@@ -1,17 +1,11 @@
 package com.belkin.finch_backend.service;
 
 import com.belkin.finch_backend.api.dto.*;
-import com.belkin.finch_backend.dao.interfaces.CardDAO;
-import com.belkin.finch_backend.dao.interfaces.GuideDAO;
-import com.belkin.finch_backend.dao.interfaces.GuideFavourDAO;
-import com.belkin.finch_backend.dao.interfaces.GuideLikeDAO;
+import com.belkin.finch_backend.dao.interfaces.*;
 import com.belkin.finch_backend.exception.AccessDeniedException;
 import com.belkin.finch_backend.exception.notfound.CardNotFoundException;
 import com.belkin.finch_backend.exception.notfound.GuideNotFoundException;
-import com.belkin.finch_backend.model.Card;
-import com.belkin.finch_backend.model.Favour;
-import com.belkin.finch_backend.model.Guide;
-import com.belkin.finch_backend.model.Like;
+import com.belkin.finch_backend.model.*;
 import com.belkin.finch_backend.util.Base62;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +24,7 @@ public class GuideService {
     private final CardDAO cardDAO;
     private final GuideLikeDAO guideLikesDAO;
     private final GuideFavourDAO guideFavorDAO;
+    private final ReportDAO reportDAO;
     private final UserService userService;
 
     @Autowired
@@ -37,11 +32,13 @@ public class GuideService {
                         @Qualifier("database_card") CardDAO cardDAO,
                         @Qualifier("database_guide_like") GuideLikeDAO guideLikesDAO,
                         @Qualifier("database_guide_favour") GuideFavourDAO guideFavorDAO,
+                        @Qualifier("database_guide_report") ReportDAO reportDAO,
                         UserService userService) {
         this.guideDAO = guideDAO;
         this.cardDAO = cardDAO;
         this.guideLikesDAO = guideLikesDAO;
         this.guideFavorDAO = guideFavorDAO;
+        this.reportDAO = reportDAO;
         this.userService = userService;
     }
 
@@ -295,6 +292,12 @@ public class GuideService {
         else {
             return null;
         }
+    }
+
+
+    /* ========================= Favourites API ========================= */
+    public void report(String username, ReportReason reason) {
+        reportDAO.save(new Report(reason.getId(), username, reason.getReason()));
     }
 
 }

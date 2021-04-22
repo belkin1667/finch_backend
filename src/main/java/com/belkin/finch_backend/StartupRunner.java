@@ -65,7 +65,7 @@ public class StartupRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         createImageDirectory();
         //emptyImageDirectory();
-        generateMockData();
+        //generateMockData();
         //getClassesSpec();
     }
 
