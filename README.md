@@ -2,8 +2,13 @@ SOME CHANGES HERER
 
 AND HERE CHANGES HERER
 
+T1t1t1t Chagnegs
 
 # Backend part of social network for travelers *Finch*
+
+
+T1t1t1t Chagnegs
+
 
 ### References
 See Frontend Repository [here](https://github.com/artemgoncharov2000/finch-frontend) (React Native iOS app)  
